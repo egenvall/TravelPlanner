@@ -34,6 +34,7 @@ ext {
     // dependency versions
     junitVersion = '4.12'
     supportLibraryVersion = '25.0.1'
+    conductorVersion = '2.0.4'
     rxJavaVersion = '1.1.0'
     rxAndroidVersion = '1.1.0'
     daggerVersion = '2.7'

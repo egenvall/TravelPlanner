@@ -51,6 +51,10 @@ dependencies {
     compile "io.reactivex:rxjava:$rootProject.rxJavaVersion"
     compile "io.reactivex:rxandroid:$rootProject.rxAndroidVersion"
 
+    compile "com.bluelinelabs:conductor:$rootProject.conductorVersion"
+    compile "com.bluelinelabs:conductor-support:$rootProject.conductorVersion"
+    compile "com.bluelinelabs:conductor-rxlifecycle:$rootProject.conductorVersion"
+
     //compile "com.google.code.gson:gson:$rootProject.gsonVersion"
     compile "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     compile "com.squareup.okhttp3:logging-interceptor:$rootProject.okHttpVersion"
@@ -87,6 +91,8 @@ dependencies. This is required since Espresso internally has a dependency on sup
 */
 configurations.all {
     resolutionStrategy.force "com.android.support:support-annotations:$supportLibraryVersion"
+    resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+
 }
 
 /*
