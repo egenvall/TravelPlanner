@@ -1,5 +1,6 @@
 
 buildscript {
+    ext.kotlin_version = '1.0.5-2'
 
     ext.gradleVersion = '2.2.2'
     ext.kotlinVersion = '1.0.5-2'
@@ -11,6 +12,7 @@ buildscript {
         classpath "com.android.tools.build:gradle:$gradleVersion"
         classpath "com.neenbedankt.gradle.plugins:android-apt:1.8"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -35,8 +37,8 @@ ext {
     junitVersion = '4.12'
     supportLibraryVersion = '25.0.1'
     conductorVersion = '2.0.4'
-    rxJavaVersion = '1.1.0'
-    rxAndroidVersion = '1.1.0'
+    rxJavaVersion = '2.0.2'
+    rxAndroidVersion = '2.0.1'
     daggerVersion = '2.7'
     gsonVersion = '2.6.1'
     retrofitVersion = '2.1.0'

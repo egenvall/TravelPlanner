@@ -5,6 +5,7 @@ import com.egenvall.travelplanner.common.injection.module.ActivityModule
 import com.egenvall.travelplanner.common.injection.module.MainViewModule
 import com.egenvall.travelplanner.common.injection.scope.PerScreen
 import com.egenvall.travelplanner.main.MainActivity
+import com.egenvall.travelplanner.main.MainController
 import dagger.Component
 
 @PerScreen
@@ -12,4 +13,5 @@ import dagger.Component
 interface MainViewComponent : ActivityComponent {
 
     fun inject(mainActivity: MainActivity)
+    fun inject(mainController: MainController)
 }

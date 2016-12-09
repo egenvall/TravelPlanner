@@ -1,9 +1,10 @@
 package com.egenvall.travelplanner.base.domain
 
-import rx.Subscriber
+import io.reactivex.subscribers.ResourceSubscriber
 
-class DefaultSubscriber<T> : Subscriber<T>() {
-    override fun onCompleted() {
+
+class DefaultSubscriber<T> : ResourceSubscriber<T>() {
+    override fun onComplete() {
     }
 
     override fun onError(e: Throwable) {
