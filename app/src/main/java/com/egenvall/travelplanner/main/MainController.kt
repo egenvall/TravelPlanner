@@ -3,7 +3,6 @@ package com.egenvall.travelplanner.main
 import android.support.annotation.LayoutRes
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import com.egenvall.travelplanner.ExampleApplication
 import com.egenvall.travelplanner.R
@@ -18,7 +17,6 @@ import javax.inject.Inject
 class MainController : BaseController<MainPresenter.View, MainPresenter>(),
         MainPresenter.View {
 
-
     private lateinit var mainViewComponent: MainViewComponent
     override val passiveView: MainPresenter.View = this
     @Inject override lateinit var presenter: MainPresenter
@@ -30,7 +28,6 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
     //===================================================================================
     override fun onViewBound(view: View) {
         initInjection()
-        Log.d(TAG,"View Bound")
         val fab = view.findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener { presenter.onButtonClicked() }
     }
@@ -52,7 +49,7 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
     // View methods
     //===================================================================================
 
-    override fun showMessage() {
-        view?.showSnackbar("Button was pressed")
+    override fun showMessage(str : String) {
+        view?.showSnackbar(str)
     }
 }
