@@ -1,7 +1,8 @@
 package com.egenvall.travelplanner.base.domain
 
-import com.egenvall.travelplanner.common.threading.UiExecutor
+import android.util.Log
 import com.egenvall.travelplanner.common.threading.BackgroundExecutor
+import com.egenvall.travelplanner.common.threading.UiExecutor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -23,5 +24,6 @@ abstract class ReactiveUseCase<ObservableType> (
 
     fun unsubscribe() {
         disposables.clear();
+        Log.d("BASEUSECASE","CLEARED DISPOSLABLE")
     }
 }

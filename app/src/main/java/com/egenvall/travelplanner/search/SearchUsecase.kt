@@ -1,4 +1,4 @@
-package com.egenvall.travelplanner.main
+package com.egenvall.travelplanner.search
 
 import com.egenvall.travelplanner.base.domain.ReactiveUseCase
 import com.egenvall.travelplanner.common.threading.AndroidUiExecutor
@@ -8,7 +8,7 @@ import io.reactivex.observers.DisposableObserver
 import javax.inject.Inject
 
 
-class SomeUseCase @Inject constructor(uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<String>(uiExec,ioExec) {
+class SearchUsecase @Inject constructor(uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<String>(uiExec,ioExec) {
 
     fun doSomething(presenterObserver : DisposableObserver<String>){
         super.executeUseCase(presenterObserver)

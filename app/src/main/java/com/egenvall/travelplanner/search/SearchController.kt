@@ -1,28 +1,25 @@
-package com.egenvall.travelplanner.main
+package com.egenvall.travelplanner.search
 
 import android.support.annotation.LayoutRes
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.support.ControllerPagerAdapter
 import com.egenvall.travelplanner.ExampleApplication
 import com.egenvall.travelplanner.R
 import com.egenvall.travelplanner.base.presentation.BaseController
-import com.egenvall.travelplanner.common.injection.component.DaggerMainViewComponent
-import com.egenvall.travelplanner.common.injection.component.MainViewComponent
+import com.egenvall.travelplanner.common.injection.component.DaggerSearchViewComponent
+import com.egenvall.travelplanner.common.injection.component.SearchViewComponent
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
 import com.egenvall.travelplanner.extension.showSnackbar
 import javax.inject.Inject
 
 
-class ChildController : BaseController<MainPresenter.View, MainPresenter>(),
-MainPresenter.View{
-    private lateinit var mainViewComponent: MainViewComponent
-    override val passiveView: MainPresenter.View = this
-    @Inject override lateinit var presenter: MainPresenter
-    @LayoutRes override val layoutResId: Int = R.layout.page
-    private val TAG = "ChildController"
+class SearchController : BaseController<SearchPresenter.View, SearchPresenter>(),
+        SearchPresenter.View {
+    private lateinit var searchViewComponent: SearchViewComponent
+    override val passiveView: SearchPresenter.View = this
+    @Inject override lateinit var presenter: SearchPresenter
+    @LayoutRes override val layoutResId: Int = R.layout.screen_search
+    private val TAG = "SearchController"
 
 
     //===================================================================================
@@ -38,11 +35,11 @@ MainPresenter.View{
 
     override fun initInjection() {
         val act = activity as AppCompatActivity
-        mainViewComponent = DaggerMainViewComponent.builder()
+        searchViewComponent = DaggerSearchViewComponent.builder()
                 .appComponent((act.application as ExampleApplication).appComponent)
                 .activityModule(ActivityModule(act))
                 .build()
-        mainViewComponent.inject(this)
+        searchViewComponent.inject(this)
     }
 
     //===================================================================================

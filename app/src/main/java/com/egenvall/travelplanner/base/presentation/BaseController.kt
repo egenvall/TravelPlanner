@@ -1,6 +1,7 @@
 package com.egenvall.travelplanner.base.presentation
 
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.rxlifecycle.RxController
@@ -28,14 +29,9 @@ abstract class BaseController<View: BaseView, out Presenter : BasePresenter<View
     }
 
     override fun onDetach(view: android.view.View) {
-        super.onDetach(view)
         presenter.onViewDetached()
+        super.onDetach(view)
     }
-    /*private val act = activity as AppCompatActivity
-
-    protected fun appComponent() = (act.application as ExampleApplication).appComponent
-
-    protected fun activityModule() = ActivityModule(act)*/
 
     protected abstract fun initInjection()
 }

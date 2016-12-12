@@ -2,42 +2,39 @@ package com.egenvall.travelplanner.main
 
 import android.graphics.Color
 import android.support.annotation.LayoutRes
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
+import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewParent
+import android.view.ViewGroup
 import com.bluelinelabs.conductor.Controller
+import com.bluelinelabs.conductor.rxlifecycle.RxController
 import com.bluelinelabs.conductor.support.ControllerPagerAdapter
-import com.egenvall.travelplanner.ExampleApplication
 import com.egenvall.travelplanner.R
-import com.egenvall.travelplanner.base.presentation.BaseController
-import com.egenvall.travelplanner.common.injection.component.DaggerMainViewComponent
-import com.egenvall.travelplanner.common.injection.component.MainViewComponent
-import com.egenvall.travelplanner.common.injection.module.ActivityModule
-import com.egenvall.travelplanner.extension.showSnackbar
+import com.egenvall.travelplanner.favourite.FavouriteController
+import com.egenvall.travelplanner.search.SearchController
 import devlight.io.library.ntb.NavigationTabBar
-import javax.inject.Inject
 
-
-class MainController : BaseController<MainPresenter.View, MainPresenter>(),
-        MainPresenter.View {
-
-    private lateinit var mainViewComponent: MainViewComponent
-    override val passiveView: MainPresenter.View = this
-    @Inject override lateinit var presenter: MainPresenter
-    lateinit var pagerAdapter : ControllerPagerAdapter
-    lateinit var viewPager : ViewPager
-    lateinit var navigationTabBar :  NavigationTabBar
-
-    @LayoutRes override val layoutResId: Int = R.layout.screen_main
+/**
+ * MainController acts like a container that contains a [navigationTabBar] and a
+ * [viewPager] which [pagerAdapter] from Conductor has Controllers.
+ * as its views.
+ */
+class MainController : RxController(){
+    private val pagerAdapter : ControllerPagerAdapter
+    private lateinit var viewPager : ViewPager
+    private lateinit var navigationTabBar :  NavigationTabBar
+    @LayoutRes val layoutResId: Int = R.layout.screen_main
     private val TAG = "MainController"
 
 
     init {
         pagerAdapter = object : ControllerPagerAdapter(this, false) {
             override fun getItem(position: Int): Controller {
-                return ChildController()
+                when(position){
+                    0 -> return SearchController()
+                    1 -> return FavouriteController()
+                }
+                return FavouriteController()
             }
 
             override fun getCount(): Int {
@@ -49,84 +46,59 @@ class MainController : BaseController<MainPresenter.View, MainPresenter>(),
             }
         }
     }
+
     //===================================================================================
     // Lifecycle methods and initialization
     //===================================================================================
-    override fun onViewBound(view: View) {
-        initInjection()
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        val view = inflater.inflate(layoutResId,container,false)
+        onViewBound(view)
+        return view
+    }
+
+     fun onViewBound(view: View) {
         navigationTabBar = view.findViewById(R.id.ntb) as NavigationTabBar
         viewPager = view.findViewById(R.id.view_pager) as ViewPager
         viewPager.adapter = pagerAdapter
         initTabBar()
     }
 
-    //===================================================================================
-    // Dependency injection
-    //===================================================================================
-
-    override fun initInjection() {
-        val act = activity as AppCompatActivity
-        mainViewComponent = DaggerMainViewComponent.builder()
-                .appComponent((act.application as ExampleApplication).appComponent)
-                .activityModule(ActivityModule(act))
-                .build()
-        mainViewComponent.inject(this)
-    }
-
-    //===================================================================================
-    // View methods
-    //===================================================================================
-
-    override fun showMessage(str : String) {
-        view?.showSnackbar(str)
+    override fun onDestroyView(view: View) {
+        viewPager.adapter = null
+        super.onDestroyView(view)
     }
 
 
 
-    fun initTabBar(){
-
+    private fun initTabBar(){
         val models = mutableListOf<NavigationTabBar.Model>()
         val colors = resources?.getStringArray(R.array.red_wine)
         models.add(
                 NavigationTabBar.Model.Builder(
-                        resources?.getDrawable(R.drawable.ic_first),
+                        resources?.getDrawable(R.drawable.ic_search_white_24dp),
                         Color.parseColor(colors!![0])
                 )
-                        .badgeTitle("NTB")
+                        .badgeTitle(resources?.getString(R.string.search))
                         .build()
         )
         models.add(
                 NavigationTabBar.Model.Builder(
-                        resources?.getDrawable(R.drawable.ic_second),
+                        resources?.getDrawable(R.drawable.ic_favorite_border_white_24dp),
                         Color.parseColor(colors[1])
                 )
-                        .badgeTitle("with")
+                        .badgeTitle(resources?.getString(R.string.favourites))
                         .build()
         )
         models.add(
                 NavigationTabBar.Model.Builder(
-                        resources?.getDrawable(R.drawable.ic_third),
+                        resources?.getDrawable(R.drawable.ic_settings_white_24dp),
                         Color.parseColor(colors[2])
                 )
-                        .badgeTitle("state")
+                        .badgeTitle(resources?.getString(R.string.settings))
                         .build()
         )
-        models.add(
-                NavigationTabBar.Model.Builder(
-                        resources?.getDrawable(R.drawable.ic_fourth),
-                        Color.parseColor(colors[3])
-                )
-                        .badgeTitle("icon")
-                        .build()
-        )
-        models.add(
-                NavigationTabBar.Model.Builder(
-                        resources?.getDrawable(R.drawable.ic_fifth),
-                        Color.parseColor(colors[4])
-                )
-                        .badgeTitle("777")
-                        .build()
-        )
+
         navigationTabBar.models = models
         navigationTabBar.setViewPager(viewPager, 2)
         navigationTabBar.titleMode = NavigationTabBar.TitleMode.ACTIVE

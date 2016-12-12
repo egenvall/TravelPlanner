@@ -1,6 +1,7 @@
 package com.egenvall.travelplanner.base.presentation
 
 import android.support.annotation.CallSuper
+import android.util.Log
 
 abstract class BasePresenter<View: BaseView> {
 
