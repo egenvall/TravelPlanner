@@ -11,7 +11,7 @@ data class LocationList( val errorText : String,  val error : String,
 
 
 data class StopLocation( val id : String = "id",  val type : String = "type",
-                         val track : String= "track",  val lon : Double = 0.0,
+                          val lon : Double = 0.0,
                          val lat : Double = 0.0,  val idx : String = "idx",
                          val name : String = "Stopname")
 data class CoordLocation( val type : String = "type",  val lon : Double = 0.0,  val lat : Double = 0.0,  val idx : String ="idx",  val name : String ="Coordname")
