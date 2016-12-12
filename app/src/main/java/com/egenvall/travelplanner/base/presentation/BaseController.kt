@@ -5,7 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bluelinelabs.conductor.rxlifecycle.RxController
-import com.egenvall.travelplanner.ExampleApplication
+import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
 
 

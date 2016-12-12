@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import com.bluelinelabs.conductor.Conductor
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
-import com.egenvall.travelplanner.ExampleApplication
+import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.R
 
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(){
-    protected fun appComponent() = (application as ExampleApplication).appComponent
+    protected fun appComponent() = (application as TravelPlanner).appComponent
     protected fun activityModule() = ActivityModule(this)
     lateinit var mRouter : Router
     override fun onCreate(savedInstanceState: Bundle?) {

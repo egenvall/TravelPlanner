@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.egenvall.travelplanner.ExampleApplication
+import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
 
 abstract class BaseFragment<View: BaseView, out Presenter : BasePresenter<View>> : Fragment() {
@@ -38,7 +38,7 @@ abstract class BaseFragment<View: BaseView, out Presenter : BasePresenter<View>>
 
     private val act = activity as AppCompatActivity
 
-    protected fun appComponent() = (act.application as ExampleApplication).appComponent
+    protected fun appComponent() = (act.application as TravelPlanner).appComponent
 
     protected fun activityModule() = ActivityModule(act)
 

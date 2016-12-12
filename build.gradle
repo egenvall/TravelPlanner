@@ -40,7 +40,7 @@ ext {
     rxJavaVersion = '2.0.2'
     rxAndroidVersion = '2.0.1'
     daggerVersion = '2.7'
-    gsonVersion = '2.6.1'
+    gsonVersion = '2.1.0'
     retrofitVersion = '2.1.0'
     okHttpVersion = '3.4.1'
     mockitoVersion = '1.10.19'

@@ -2,7 +2,7 @@ package com.egenvall.travelplanner.base.presentation
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.egenvall.travelplanner.ExampleApplication
+import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
 
 abstract class BaseActivity<View: BaseView, out Presenter : BasePresenter<View>> : AppCompatActivity() {
@@ -48,7 +48,7 @@ abstract class BaseActivity<View: BaseView, out Presenter : BasePresenter<View>>
         presenter.onViewDetached()
     }
 
-    protected fun appComponent() = (application as ExampleApplication).appComponent
+    protected fun appComponent() = (application as TravelPlanner).appComponent
 
     protected fun activityModule() = ActivityModule(this)
 

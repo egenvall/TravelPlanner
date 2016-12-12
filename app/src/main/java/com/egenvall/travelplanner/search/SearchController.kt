@@ -3,7 +3,7 @@ package com.egenvall.travelplanner.search
 import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.egenvall.travelplanner.ExampleApplication
+import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.R
 import com.egenvall.travelplanner.base.presentation.BaseController
 import com.egenvall.travelplanner.common.injection.component.DaggerSearchViewComponent
@@ -27,6 +27,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     //===================================================================================
     override fun onViewBound(view: View) {
         initInjection()
+        presenter.onButtonClicked()
     }
 
     //===================================================================================
@@ -36,7 +37,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     override fun initInjection() {
         val act = activity as AppCompatActivity
         searchViewComponent = DaggerSearchViewComponent.builder()
-                .appComponent((act.application as ExampleApplication).appComponent)
+                .appComponent((act.application as TravelPlanner).appComponent)
                 .activityModule(ActivityModule(act))
                 .build()
         searchViewComponent.inject(this)

@@ -24,6 +24,5 @@ abstract class ReactiveUseCase<ObservableType> (
 
     fun unsubscribe() {
         disposables.clear();
-        Log.d("BASEUSECASE","CLEARED DISPOSLABLE")
     }
 }
