@@ -1,5 +1,6 @@
 package com.egenvall.travelplanner.main
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 
@@ -13,6 +14,9 @@ import com.egenvall.travelplanner.common.injection.component.DaggerMainViewCompo
 import com.egenvall.travelplanner.common.injection.component.MainViewComponent
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
 import kotlinx.android.synthetic.main.activity_main.*
+import devlight.io.library.ntb.NavigationTabBar
+import android.graphics.Color.parseColor
+import java.util.*
 
 
 class MainActivity : AppCompatActivity(){
@@ -37,5 +41,7 @@ class MainActivity : AppCompatActivity(){
                 .build()
         mainViewComponent.inject(this)
     }
+
+
 }
 

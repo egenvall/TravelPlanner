@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main_kotlin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.egenvall.travelplanner.main.MainActivity">
 
     <com.bluelinelabs.conductor.ChangeHandlerFrameLayout
@@ -14,4 +15,6 @@
         tools:context=".ui.MainActivity">
     </com.bluelinelabs.conductor.ChangeHandlerFrameLayout>
 
-</LinearLayout>
+
+
+</RelativeLayout>
