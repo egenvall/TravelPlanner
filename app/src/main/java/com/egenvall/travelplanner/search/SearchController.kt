@@ -9,7 +9,11 @@ import com.egenvall.travelplanner.base.presentation.BaseController
 import com.egenvall.travelplanner.common.injection.component.DaggerSearchViewComponent
 import com.egenvall.travelplanner.common.injection.component.SearchViewComponent
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
+import com.egenvall.travelplanner.extension.getDrawable
+import com.egenvall.travelplanner.extension.setDrawable
 import com.egenvall.travelplanner.extension.showSnackbar
+import kotlinx.android.synthetic.main.screen_search.*
+import kotlinx.android.synthetic.main.screen_search.view.*
 import javax.inject.Inject
 
 
@@ -27,7 +31,20 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     //===================================================================================
     override fun onViewBound(view: View) {
         initInjection()
-        presenter.onButtonClicked()
+        view.search_expand_btn.setOnClickListener {toggleExpandableView(view)}
+        presenter.searchForLocation("Lantmilsgatan")
+    }
+
+    fun toggleExpandableView(view:View){
+        if (view.expandable_layout.isExpanded){
+            view.expandable_layout.collapse(true)
+            view.search_expand_btn.setDrawable(view.getDrawable(R.drawable.ic_expand_more_white_36dp))
+        }
+        else {
+            view.expandable_layout.expand(true)
+            view.search_expand_btn.setDrawable(view.getDrawable(R.drawable.ic_expand_less_white_36dp))
+        }
+
     }
 
     //===================================================================================
