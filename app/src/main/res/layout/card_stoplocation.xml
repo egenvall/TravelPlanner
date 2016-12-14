@@ -1,0 +1,36 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        >
+    <ImageView
+        android:id="@+id/holder_stoplocation_img"
+        android:contentDescription="@string/content_desc_stoploc_img"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_eighth"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/stoplocation_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/stoplocation_hint"
+        android:textColor="@color/material_text_primary"
+        android:textColorHint="@color/material_text_secondary"
+        app:layout_constraintLeft_toRightOf="@+id/holder_stoplocation_img"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="32dp" />
+    </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>

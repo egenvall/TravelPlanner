@@ -21,7 +21,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         searchUsecase.unsubscribe()
     }
 
-    fun searchForLocation(searchTerm : String) {
+    fun searchForLocation(searchTerm : String, wasOrigin : Boolean) {
         searchUsecase.searchForLocation(searchTerm.trim(),object : DisposableObserver<VtResponseModel>(){
             override fun onNext(response : VtResponseModel){
                 val locationList = response.LocationList
@@ -33,7 +33,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
                         .filter { it.idx.toInt() <= 5 }
                         .sortedBy { it.idx }
                 Log.d("SearchPresenter","$topFive")
-                view.setSearchResults(topFive.toMutableList())
+                view.setSearchResults(topFive,wasOrigin)
 
             }
             override fun onError(e: Throwable?)  = view.showMessage(e.toString())
@@ -43,6 +43,6 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
 
     interface View : BaseView {
         fun showMessage(str : String)
-        fun setSearchResults(list : MutableList<StopLocation>)
+        fun setSearchResults(list : List<StopLocation>, wasOrigin: Boolean)
     }
 }
