@@ -23,11 +23,16 @@ import com.egenvall.travelplanner.extension.getDrawable
 import com.egenvall.travelplanner.extension.setDrawable
 import com.egenvall.travelplanner.extension.showSnackbar
 import com.egenvall.travelplanner.model.StopLocation
+import com.jakewharton.rxbinding.widget.RxTextView
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import kotlinx.android.synthetic.main.screen_search.view.*
+import rx.Subscription
+import rx.subscriptions.Subscriptions
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
+
 
 
 class SearchController : BaseController<SearchPresenter.View, SearchPresenter>(),
@@ -43,6 +48,12 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
 
     lateinit private var mOrigin : StopLocation
     lateinit private var mDestination : StopLocation
+    private var editOrgSubscription = Subscriptions.unsubscribed()
+    private var editDestSubscription = Subscriptions.unsubscribed()
+
+
+    lateinit var originText : EditText
+    lateinit var destText : EditText
     val TAG = "SearchController"
 
 
@@ -53,20 +64,33 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         initInjection()
         view.search_expand_btn.setOnClickListener {toggleExpandableView(view)}
         view.search_swap_btn.setOnClickListener { swapOriginDestination() }
+
+        originText = view.origin_edt
+        destText = view.desination_edt
+
+        /**
+         * Origin Recycler
+         */
         mRecyclerOrigin = view.origin_recycler
         mOriginAdapter = SearchAdapter(mutableListOf<StopLocation>()){ clickedOrigin(it) }
-
         mRecyclerOrigin.setHasFixedSize(false)
         mRecyclerOrigin.layoutManager = LinearLayoutManager(applicationContext)
         mRecyclerOrigin.adapter = mOriginAdapter
 
-
+        /**
+         * Destination recycler
+         */
         mRecyclerDestination = view.destination_recycler
         mRecyclerDestination.setHasFixedSize(false)
         mRecyclerDestination.layoutManager = LinearLayoutManager(applicationContext)
         mDestAdapter = SearchAdapter(mutableListOf<StopLocation>()){ clickedDest(it) }
         mRecyclerDestination.adapter = mDestAdapter
-        setTextFieldObservers(view)
+
+        /**
+         * Start subscription for edittexts
+         */
+        startEditOrgSub(originText)
+        startEditDestSub(destText)
     }
 
     fun swapOriginDestination(){
@@ -77,85 +101,58 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
 
     }
 
-    fun setEditTextName(name : String){
-        val focusedEdt = view?.findFocus() as EditText
-        focusedEdt.setText(name)
-        view?.expandable_layout_origin_search?.collapse(true)
-        view?.expandable_layout_destination_search?.collapse(true)
+    fun startEditDestSub(view: EditText){
+        with(view){
+            setSelectAllOnFocus(true)
+            editDestSubscription =  RxTextView.afterTextChangeEvents(view)
+                    .skip(1)
+                    .map { s -> s.editable().toString()}
+                    .distinctUntilChanged()
+                    .filter { startedTyping -> startedTyping.length >= 3 }
+                    .debounce (1000, TimeUnit.MILLISECONDS)
+                    .filter { afterStoppedTyping -> afterStoppedTyping.length >=3 }
+                    .subscribe({ finalText ->
+                        if (finalText.length > 3)
+                        searchForLocation(finalText,false)
+                    })
+        }
     }
-    fun clickedOrigin(item : StopLocation){
-        setEditTextName(item.name)
-        mOrigin = item
-        Log.d(TAG,"Set origin : $mOrigin")
 
+    fun startEditOrgSub(view: EditText){
+        with(view){
+            setSelectAllOnFocus(true)
+            editOrgSubscription =  RxTextView.afterTextChangeEvents(view)
+                    .skip(1)
+                    .map { s -> s.editable().toString()}
+                    .distinctUntilChanged()
+                    .filter { startedTyping -> startedTyping.length >= 3 }
+                    .debounce (1000, TimeUnit.MILLISECONDS)
+                    .filter { afterStoppedTyping -> afterStoppedTyping.length >=3 }
+                    .subscribe({ finalText ->
+                        if (finalText.length > 3)
+                            searchForLocation(finalText,true)
+                    })
+        }
     }
+
 
     fun clickedDest(item: StopLocation){
-        setEditTextName(item.name)
+        editDestSubscription.unsubscribe()
+        destText.setText(item.name)
+        view?.expandable_layout_destination_search?.collapse(true)
         mDestination = item
-        Log.d(TAG,"Set dest : $mDestination")
+        startEditDestSub(destText)
     }
 
-    fun setTextFieldObservers(view : View){
-        with(view.origin_edt) {
-            setOnFocusChangeListener { view, b ->
-                if (b) {
-                    Log.d(TAG, "Got Focus")
-                    setSelectAllOnFocus(true)
-                    Observable.create(ObservableOnSubscribe<String> { sub ->
-                        addTextChangedListener(object : TextWatcher {
-                            override fun afterTextChanged(s: Editable?) = Unit
-                            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-                            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                                if (s.length > 3) {
-                                    removeTextChangedListener(this)
-                                    sub.onNext(s.toString())
-                                }
+    fun clickedOrigin(item : StopLocation){
+        editOrgSubscription.unsubscribe()
+        originText.setText(item.name)
+        view?.expandable_layout_origin_search?.collapse(true)
+        mOrigin = item
+        startEditOrgSub(originText)
 
-                            }
-                        })
-                    }).debounce(1000, TimeUnit.MILLISECONDS)
-                            .observeOn(AndroidUiExecutor().scheduler)
-                            .subscribe({
-                                writtenText ->
-                                searchForLocation(writtenText,true)
-                            })
-                } else {
-                    Log.d(TAG, "Lost Focus")
-                }
-            }
-        }
-            with(view.desination_edt){
-                setOnFocusChangeListener { view, b ->
-                    if (b){
-                        Log.d(TAG,"Got Focus")
-                        setSelectAllOnFocus(true)
-                        Observable.create(ObservableOnSubscribe<String> { sub ->
-                            addTextChangedListener(object : TextWatcher{
-                                override fun afterTextChanged(s: Editable?) = Unit
-                                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-                                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int)
-                                {
-                                    if (s.length > 3){
-                                        removeTextChangedListener(this)
-                                        sub.onNext(s.toString())
-                                    }
-
-                                }
-                            })
-                        }).debounce(1000, TimeUnit.MILLISECONDS)
-                                .observeOn(AndroidUiExecutor().scheduler)
-                                .subscribe({
-                                    writtenText ->
-                                    searchForLocation(writtenText,false)
-                                })
-                    }
-                    else{
-                        Log.d(TAG,"Lost Focus")
-                    }
-                }
-        }
     }
+
 
     fun searchForLocation(searchTerm : String, originRequested : Boolean){
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -212,7 +209,5 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
                 notifyDataSetChanged()
             }
         }
-        //TODO HERE HOW
-
     }
 }
