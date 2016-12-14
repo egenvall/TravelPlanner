@@ -12,7 +12,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="384dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/material_primary_dark"
     tools:layout_editor_absoluteY="0dp"
@@ -62,7 +62,7 @@
         android:id="@+id/expandable_layout_origin_search"
         app:layout_constraintTop_toBottomOf="@+id/origin_edt"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_width="384dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:el_duration="300"
         app:el_expanded="false"
@@ -173,7 +173,7 @@
 
     <!-- Recycler Review For Trips -->
     <android.support.v7.widget.RecyclerView
-        android:layout_width="384dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/search_recycler"
         android:background="@color/material_primary_light"
