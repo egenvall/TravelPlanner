@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/search_constraint_layout"
+    android:id="@+id/search_constraint_layout_main"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
-        android:layout_width="384dp"
-        android:id="@+id/search_top_bg"
-        android:background="@color/material_primary_dark"
-        android:adjustViewBounds="false"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp"
-        android:layout_height="180dp" />
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_top_bg"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="384dp"
+    android:layout_height="wrap_content"
+    android:background="@color/material_primary_dark"
+    tools:layout_editor_absoluteY="0dp"
+    tools:layout_editor_absoluteX="0dp">
+    >
+
 
     <TextView
         android:text="@string/search_title"
@@ -25,9 +29,10 @@
         android:textColor="@color/material_text_icons"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/search_top_bg"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="24dp" />
 
+<!-- ORIGIN -->
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,9 +57,43 @@
         android:textColorHint="@color/material_text_icons"
         app:layout_constraintTop_toTopOf="@+id/search_gps_button" />
 
+    <!-- EXPANDABLE LAYOUT FOR ORIGIN RECYCLER -->
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/expandable_layout_origin_search"
+        app:layout_constraintTop_toBottomOf="@+id/origin_edt"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="384dp"
+        android:layout_height="wrap_content"
+        app:el_duration="300"
+        app:el_expanded="false"
+        app:el_translate_children="true">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/material_primary_light"
+            android:id="@+id/origin_recycler">
+        </android.support.v7.widget.RecyclerView>
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
+
+
+    <View
+        android:layout_height="1dp"
+        android:layout_width="240dp"
+        android:background="@color/material_divider"
+        android:id="@+id/search_divider"
+        app:layout_constraintBottom_toTopOf="@+id/desination_edt"
+        app:layout_constraintTop_toBottomOf="@+id/expandable_layout_origin_search"
+        app:layout_constraintLeft_toLeftOf="@+id/desination_edt" />
+
+
+
+<!-- DESTINATION -->
     <EditText
         android:id="@+id/desination_edt"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toRightOf="@+id/search_dest_icon"
         android:inputType="textPersonName"
@@ -65,14 +104,7 @@
         android:textColorHint="@color/material_text_icons"
         android:background="@android:color/transparent"
         app:layout_constraintTop_toTopOf="@+id/search_dest_icon" />
-    <View
-        android:layout_height="1dp"
-        android:layout_width="240dp"
-        android:background="@color/material_divider"
-        android:id="@+id/search_divider"
-        app:layout_constraintBottom_toTopOf="@+id/desination_edt"
-        app:layout_constraintTop_toBottomOf="@+id/origin_edt"
-        app:layout_constraintLeft_toLeftOf="@+id/desination_edt" />
+
 
     <ImageView
         android:layout_width="wrap_content"
@@ -80,10 +112,12 @@
         app:srcCompat="@drawable/ic_location_on_white_18dp"
         android:contentDescription="@string/content_desc_gps_btn"
         android:id="@+id/search_dest_icon"
-        app:layout_constraintTop_toBottomOf="@+id/search_gps_button"
+        app:layout_constraintTop_toBottomOf="@+id/search_divider"
         app:layout_constraintLeft_toLeftOf="@+id/search_gps_button"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="8dp" />
 
+
+    <!-- SWAP BUTTON -->
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -98,44 +132,51 @@
         app:layout_constraintLeft_toRightOf="@+id/search_divider"
         />
 
+
+    <!-- EXPAND BUTTON -->
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
         app:srcCompat="@drawable/ic_expand_more_white_36dp"
-        app:layout_constraintBottom_toBottomOf="@+id/search_top_bg"
         android:id="@+id/search_expand_btn"
-        app:layout_anchorGravity="bottom|left|end"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/padderview" />
+
+    <View
+        android:id="@+id/padderview"
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        app:layout_constraintTop_toBottomOf="@id/desination_edt"
         />
 
 
+</android.support.constraint.ConstraintLayout>
+    <!-- EXPANDABLE LAYOUT FOR SETTINGS -->
     <net.cachapa.expandablelayout.ExpandableLayout
-        app:layout_constraintTop_toBottomOf="@+id/search_top_bg"
-        app:layout_constraintLeft_toLeftOf="@id/search_top_bg"
+        app:layout_constraintTop_toBottomOf="@id/search_top_bg"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:id="@+id/expandable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:el_duration="300"
         app:el_expanded="false"
-        app:el_translate_children="true"
-        tools:layout_editor_absoluteX="0dp">
-
+        app:el_translate_children="true">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:layout_height="30dp"
             android:background="@color/material_accent"
-            android:text="Fixed height" />
-
+            android:text="Fixed height"
+            />
     </net.cachapa.expandablelayout.ExpandableLayout>
 
+    <!-- Recycler Review For Trips -->
     <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_width="384dp"
+        android:layout_height="wrap_content"
         android:id="@+id/search_recycler"
         android:background="@color/material_primary_light"
-        app:layout_constraintTop_toBottomOf="@+id/expandable_layout"
+        app:layout_constraintTop_toBottomOf="@id/search_top_bg"
         app:layout_constraintLeft_toLeftOf="parent" />
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
