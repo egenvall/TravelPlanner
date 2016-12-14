@@ -38,9 +38,9 @@
         app:layout_constraintTop_toBottomOf="@+id/search_title_text"
         app:layout_constraintLeft_toLeftOf="@+id/search_title_text" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/origin_edt"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toRightOf="@+id/search_gps_button"
         android:inputType="textPersonName"

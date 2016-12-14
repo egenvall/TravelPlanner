@@ -7,6 +7,7 @@ import com.egenvall.travelplanner.common.injection.scope.PerScreen
 import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.VtResponseModel
 import io.reactivex.observers.DisposableObserver
+import java.util.*
 import javax.inject.Inject
 
 
@@ -24,14 +25,15 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         searchUsecase.searchForLocation(searchTerm.trim(),object : DisposableObserver<VtResponseModel>(){
             override fun onNext(response : VtResponseModel){
                 val locationList = response.LocationList
-                val topTen = (locationList.CoordLocation.map {
+                val topFive = (locationList.CoordLocation.map {
                     StopLocation(type = it.type,lon = it.lon,lat = it.lat,idx = it.idx,name = it.name)
                 }
                         +locationList.StopLocation
                         )
                         .filter { it.idx.toInt() <= 5 }
                         .sortedBy { it.idx }
-                Log.d("SearchPresenter","$topTen")
+                Log.d("SearchPresenter","$topFive")
+                view.setSearchResults(topFive.toMutableList())
 
             }
             override fun onError(e: Throwable?)  = view.showMessage(e.toString())
@@ -41,5 +43,6 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
 
     interface View : BaseView {
         fun showMessage(str : String)
+        fun setSearchResults(list : MutableList<StopLocation>)
     }
 }
