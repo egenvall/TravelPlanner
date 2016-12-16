@@ -5,8 +5,6 @@ import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -18,21 +16,16 @@ import com.egenvall.travelplanner.base.presentation.BaseController
 import com.egenvall.travelplanner.common.injection.component.DaggerSearchViewComponent
 import com.egenvall.travelplanner.common.injection.component.SearchViewComponent
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
-import com.egenvall.travelplanner.common.threading.AndroidUiExecutor
 import com.egenvall.travelplanner.extension.getDrawable
 import com.egenvall.travelplanner.extension.setDrawable
 import com.egenvall.travelplanner.extension.showSnackbar
 import com.egenvall.travelplanner.model.StopLocation
 import com.jakewharton.rxbinding.widget.RxTextView
-import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
 import kotlinx.android.synthetic.main.screen_search.view.*
 import rx.Subscription
 import rx.subscriptions.Subscriptions
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
-
 
 
 class SearchController : BaseController<SearchPresenter.View, SearchPresenter>(),
@@ -89,50 +82,42 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         /**
          * Start subscription for edittexts
          */
-        startEditOrgSub(originText)
-        startEditDestSub(destText)
+        startOriginSubscription()
+        startDestinationSubscription()
     }
 
     fun swapOriginDestination(){
-        Log.d(TAG,"Before : $mOrigin     ->      $mDestination")
-        Log.d(TAG,"After : $mDestination     ->      $mOrigin")
-        view?.origin_edt?.setText(mDestination.name)
-        view?.desination_edt?.setText(mOrigin.name)
-
+        editOrgSubscription.unsubscribe()
+        editDestSubscription.unsubscribe()
+        val tmpSwap = mOrigin
+        mOrigin = mDestination
+        mDestination = tmpSwap
+        originText.setText(mOrigin.name)
+        destText.setText(mDestination.name)
+        startOriginSubscription()
+        startDestinationSubscription()
     }
 
-    fun startEditDestSub(view: EditText){
-        with(view){
-            setSelectAllOnFocus(true)
-            editDestSubscription =  RxTextView.afterTextChangeEvents(view)
-                    .skip(1)
-                    .map { s -> s.editable().toString()}
-                    .distinctUntilChanged()
-                    .filter { startedTyping -> startedTyping.length >= 3 }
-                    .debounce (1000, TimeUnit.MILLISECONDS)
-                    .filter { afterStoppedTyping -> afterStoppedTyping.length >=3 }
-                    .subscribe({ finalText ->
-                        if (finalText.length > 3)
-                        searchForLocation(finalText,false)
-                    })
-        }
+
+    fun getEditTextSub(view : EditText, origin : Boolean) : Subscription{
+        view.setSelectAllOnFocus(true)
+        return RxTextView.textChanges(view)
+                .skip(1)
+                .map { s -> s.toString()}
+                .throttleLast(200,TimeUnit.MILLISECONDS) //Emit only the last item in 200ms interval
+                .debounce (750, TimeUnit.MILLISECONDS)   //Emit the last item if 750ms has passed with no more emits
+                .subscribe({ finalText ->
+                    if (finalText.isNotBlank() and (finalText.length >=3)){
+                        searchForLocation(finalText,origin)
+                    }
+                })
     }
 
-    fun startEditOrgSub(view: EditText){
-        with(view){
-            setSelectAllOnFocus(true)
-            editOrgSubscription =  RxTextView.afterTextChangeEvents(view)
-                    .skip(1)
-                    .map { s -> s.editable().toString()}
-                    .distinctUntilChanged()
-                    .filter { startedTyping -> startedTyping.length >= 3 }
-                    .debounce (1000, TimeUnit.MILLISECONDS)
-                    .filter { afterStoppedTyping -> afterStoppedTyping.length >=3 }
-                    .subscribe({ finalText ->
-                        if (finalText.length > 3)
-                            searchForLocation(finalText,true)
-                    })
-        }
+    fun startOriginSubscription(){
+        editOrgSubscription = getEditTextSub(originText,true)
+    }
+    fun startDestinationSubscription() {
+        editDestSubscription = getEditTextSub(destText,false)
     }
 
 
@@ -141,7 +126,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         destText.setText(item.name)
         view?.expandable_layout_destination_search?.collapse(true)
         mDestination = item
-        startEditDestSub(destText)
+        startDestinationSubscription()
     }
 
     fun clickedOrigin(item : StopLocation){
@@ -149,8 +134,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         originText.setText(item.name)
         view?.expandable_layout_origin_search?.collapse(true)
         mOrigin = item
-        startEditOrgSub(originText)
-
+        startOriginSubscription()
     }
 
 
@@ -195,6 +179,10 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     }
 
     override fun setSearchResults(list: List<StopLocation>, wasOrigin : Boolean) {
+        if (list.isEmpty()) {
+            view?.showSnackbar("No results found")
+            return
+        }
         if (wasOrigin){
             view?.expandable_layout_origin_search?.expand()
             with(mOriginAdapter){

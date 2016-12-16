@@ -25,15 +25,23 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         searchUsecase.searchForLocation(searchTerm.trim(),object : DisposableObserver<VtResponseModel>(){
             override fun onNext(response : VtResponseModel){
                 val locationList = response.LocationList
-                val topFive = (locationList.CoordLocation.map {
+
+                /**
+                 * If the response contains no CoordLocation or StopLocation (Nullable in model)
+                 * Set the variable to an empty list to avoid handling nulls.
+                 * If the returned list is empty it should be handled by the view
+                 */
+                val coordList = locationList.CoordLocation?.map {
                     StopLocation(type = it.type,lon = it.lon,lat = it.lat,idx = it.idx,name = it.name)
-                }
-                        +locationList.StopLocation
-                        )
-                        .filter { it.idx.toInt() <= 5 }
-                        .sortedBy { it.idx }
-                Log.d("SearchPresenter","$topFive")
-                view.setSearchResults(topFive,wasOrigin)
+                }?: listOf<StopLocation>()
+                val stopList = locationList.StopLocation?: listOf<StopLocation>()
+
+                //Set the view to show 3 most relevant items sorted by relevance
+                view.setSearchResults(
+                        (coordList+stopList)
+                                .filter { it.idx.toInt() <= 3}
+                                .sortedBy {it.idx},wasOrigin)
+
 
             }
             override fun onError(e: Throwable?)  = view.showMessage(e.toString())
