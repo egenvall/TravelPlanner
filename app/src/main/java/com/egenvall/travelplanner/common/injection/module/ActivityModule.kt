@@ -25,4 +25,6 @@ class ActivityModule(private val activity: AppCompatActivity) {
     @Provides internal fun backgroundExecutor() : RxIoExecutor{
         return RxIoExecutor()
     }
+
+    @Provides internal fun realm(){}
 }

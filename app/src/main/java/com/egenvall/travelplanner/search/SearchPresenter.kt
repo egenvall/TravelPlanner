@@ -21,6 +21,9 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         searchUsecase.unsubscribe()
     }
 
+    /**
+     * Introduce RxBindings when it's available for RxJava2
+     */
     fun searchForLocation(searchTerm : String, wasOrigin : Boolean) {
         searchUsecase.searchForLocation(searchTerm.trim(),object : DisposableObserver<VtResponseModel>(){
             override fun onNext(response : VtResponseModel){

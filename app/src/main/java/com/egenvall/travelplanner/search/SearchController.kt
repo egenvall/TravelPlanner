@@ -22,6 +22,7 @@ import com.egenvall.travelplanner.extension.showSnackbar
 import com.egenvall.travelplanner.model.StopLocation
 import com.jakewharton.rxbinding.widget.RxTextView
 import kotlinx.android.synthetic.main.screen_search.view.*
+import net.cachapa.expandablelayout.ExpandableLayout
 import rx.Subscription
 import rx.subscriptions.Subscriptions
 import java.util.concurrent.TimeUnit
@@ -38,7 +39,6 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     lateinit private var mRecyclerDestination : RecyclerView
     lateinit private var mOriginAdapter : SearchAdapter
     lateinit private var mDestAdapter : SearchAdapter
-
     lateinit private var mOrigin : StopLocation
     lateinit private var mDestination : StopLocation
     private var editOrgSubscription = Subscriptions.unsubscribed()
@@ -99,15 +99,15 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     }
 
 
-    fun getEditTextSub(view : EditText, origin : Boolean) : Subscription{
-        view.setSelectAllOnFocus(true)
-        return RxTextView.textChanges(view)
+    fun getEditTextSub(edit : EditText, origin : Boolean) : Subscription{
+        edit.setSelectAllOnFocus(true)
+        return RxTextView.textChanges(edit)
                 .skip(1)
                 .map { s -> s.toString()}
                 .throttleLast(200,TimeUnit.MILLISECONDS) //Emit only the last item in 200ms interval
                 .debounce (750, TimeUnit.MILLISECONDS)   //Emit the last item if 750ms has passed with no more emits
                 .subscribe({ finalText ->
-                    if (finalText.isNotBlank() and (finalText.length >=3)){
+                    if (finalText.length >=3){
                         searchForLocation(finalText,origin)
                     }
                 })
@@ -183,19 +183,20 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
             view?.showSnackbar("No results found")
             return
         }
-        if (wasOrigin){
+        if (wasOrigin) {
             view?.expandable_layout_origin_search?.expand()
             with(mOriginAdapter){
                 locationList = list
                 notifyDataSetChanged()
             }
         }
-        else{
+        else {
             view?.expandable_layout_destination_search?.expand()
             with(mDestAdapter){
                 locationList = list
                 notifyDataSetChanged()
             }
         }
+
     }
 }
