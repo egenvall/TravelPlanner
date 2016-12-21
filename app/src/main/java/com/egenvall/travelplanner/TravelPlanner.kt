@@ -4,6 +4,7 @@ import android.app.Application
 import com.egenvall.travelplanner.common.injection.component.AppComponent
 import com.egenvall.travelplanner.common.injection.component.DaggerAppComponent
 import com.egenvall.travelplanner.common.injection.module.AppModule
+import com.egenvall.travelplanner.common.injection.module.RealmModule
 import com.egenvall.travelplanner.common.injection.module.VtModule
 
 
@@ -20,6 +21,7 @@ class TravelPlanner : Application() {
         appComponent = DaggerAppComponent.builder()
                 .appModule(AppModule(this))
                 .vtModule(VtModule(this))
+                .realmModule(RealmModule(this))
                 .build()
     }
 }

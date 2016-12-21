@@ -1,19 +1,18 @@
 package com.egenvall.travelplanner.search
 
-import android.util.Log
 import com.egenvall.travelplanner.base.presentation.BasePresenter
 import com.egenvall.travelplanner.base.presentation.BaseView
 import com.egenvall.travelplanner.common.injection.scope.PerScreen
-import com.egenvall.travelplanner.model.StopLocation
-import com.egenvall.travelplanner.model.VtResponseModel
+import com.egenvall.travelplanner.model.*
 import io.reactivex.observers.DisposableObserver
-import java.util.*
+import io.realm.Realm
 import javax.inject.Inject
 
 
 @PerScreen
 class SearchPresenter @Inject constructor(private val searchUsecase: SearchUsecase) : BasePresenter<SearchPresenter.View>() {
 
+   @Inject lateinit var realm : Realm
     /**
      * Called when view is detached
      */
@@ -52,8 +51,63 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         })
     }
 
+    fun addToSearchHistory(origin : StopLocation, dest : StopLocation){
+        val history = realm.where(SearchHistory::class.java).findFirst()
+        if (history == null){
+            realm.beginTransaction()
+                val history = realm.createObject(SearchHistory::class.java,"History")
+            realm.commitTransaction()
+            addPairToRealm(origin,dest)
+        }
+        else{
+            addPairToRealm(origin,dest)
+        }
+    }
+
+    fun constructPkSearchPair(origin: StopLocation, dest: StopLocation):String{
+        return origin.id+"/"+dest.id
+    }
+    fun addPairToRealm(origin: StopLocation, dest: StopLocation){
+        val history = realm.where(SearchHistory::class.java).findFirst()
+        val copy = realm.copyFromRealm(history.list)
+
+        copy.add(0, SearchPair(constructPkSearchPair(origin,dest),
+                mapToRealmStopLocation(origin),
+                mapToRealmStopLocation(dest))
+                )
+
+        realm.executeTransaction {
+            with(history.list) {
+                deleteAllFromRealm()
+                realm.copyToRealmOrUpdate(copy)
+                addAll(copy.distinctBy { it.orgPlusDestId })
+            }
+        }
+    }
+    private fun mapToRealmStopLocation(stop : StopLocation) : RealmStopLocation{
+        with(stop){
+            return RealmStopLocation(id,type,lon,lat,idx,name)
+        }
+    }
+
+    fun removeFromSearchHistory(pair : SearchPair){
+        realm.executeTransaction {
+            val result = realm.where(SearchPair::class.java)
+                    .equalTo("orgPlusDestId", pair.orgPlusDestId).findFirst()
+            result.deleteFromRealm()
+        }
+    }
+
+
+    fun getSearchHistory(){
+        realm.executeTransaction {
+            val result = realm.where(SearchHistory::class.java).findFirst().list.distinct()
+            view.setSearchHistory(realm.copyFromRealm(result))
+        }
+    }
     interface View : BaseView {
         fun showMessage(str : String)
         fun setSearchResults(list : List<StopLocation>, wasOrigin: Boolean)
+        fun setSearchHistory(list : List<SearchPair>)
     }
 }

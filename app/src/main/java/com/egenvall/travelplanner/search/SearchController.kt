@@ -19,10 +19,10 @@ import com.egenvall.travelplanner.common.injection.module.ActivityModule
 import com.egenvall.travelplanner.extension.getDrawable
 import com.egenvall.travelplanner.extension.setDrawable
 import com.egenvall.travelplanner.extension.showSnackbar
+import com.egenvall.travelplanner.model.SearchPair
 import com.egenvall.travelplanner.model.StopLocation
 import com.jakewharton.rxbinding.widget.RxTextView
 import kotlinx.android.synthetic.main.screen_search.view.*
-import net.cachapa.expandablelayout.ExpandableLayout
 import rx.Subscription
 import rx.subscriptions.Subscriptions
 import java.util.concurrent.TimeUnit
@@ -198,5 +198,12 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
             }
         }
 
+    }
+
+    override fun setSearchHistory(list: List<SearchPair>) {
+        for(p in list){
+            Log.d(TAG,"${p.orgPlusDestId}")
+        }
+        Log.d(TAG,"-----------")
     }
 }
