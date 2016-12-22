@@ -1,6 +1,7 @@
 package com.egenvall.travelplanner.network
 
 import com.egenvall.travelplanner.model.AccessToken
+import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.TripResponseModel
 import com.egenvall.travelplanner.model.VtResponseModel
 import io.reactivex.Observable
@@ -40,14 +41,26 @@ class RestDataSource @Inject constructor(private val service: VtService) : Repos
         return checkValidToken().flatMap { token -> service.getLocationByInput(formatTokenString(token),searchTerm) }
     }
 
-    override fun getTripByStops(originId: String, destId: String): Observable<TripResponseModel> {
-        return checkValidToken().flatMap { token -> service.getTripIdToId(formatTokenString(token),originId,destId) }
+    override fun getTripByStops(origin: StopLocation, destination: StopLocation): Observable<TripResponseModel> {
+        return checkValidToken().flatMap { token -> service.getTripIdToId(formatTokenString(token),origin.id,destination.id) }
     }
 
-
-    override fun getSingleLocationByInput(input: String): Observable<VtResponseModel> {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getTripsIdAndCoord(origin: StopLocation, destination: StopLocation): Observable<TripResponseModel> {
+        return checkValidToken().flatMap { token -> service.getTripIdAndCoord(formatTokenString(token)
+                ,origin.id,destination.lat.toString(),destination.lon.toString(),destination.name) }
     }
+
+    override fun getTripsCoordAndId(origin : StopLocation, destination : StopLocation): Observable<TripResponseModel> {
+        return checkValidToken().flatMap { token -> service.getTripCoordAndId(formatTokenString(token)
+                ,origin.lat.toString(),origin.lon.toString(),origin.name,destination.id)}
+    }
+
+    override fun getTripsCoordAndCoord(origin: StopLocation, destination: StopLocation): Observable<TripResponseModel> {
+        return checkValidToken().flatMap { token -> service.getTripCoordAndCoord(formatTokenString(token)
+                ,origin.lat.toString(),origin.lon.toString(),origin.name,destination.lat.toString(),
+                destination.lon.toString(),destination.name)}
+    }
+
 
     override fun getNearbyAddress(lat: String, lon: String, destId: String) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.

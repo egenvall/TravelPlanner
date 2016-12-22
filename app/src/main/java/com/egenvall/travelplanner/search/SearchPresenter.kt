@@ -59,7 +59,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
 
     fun searchForTripByLocations(origin: StopLocation, dest: StopLocation){
         addToSearchHistory(origin,dest)
-        searchTripByStopsUsecase.searchTripsByStops(origin.id,dest.id, object : DisposableObserver<TripResponseModel>() {
+        searchTripByStopsUsecase.searchTripsByStops(origin,dest, object : DisposableObserver<TripResponseModel>() {
 
             override fun onNext(value: TripResponseModel) {
                 view.setTripResults(value.TripList.Trip)

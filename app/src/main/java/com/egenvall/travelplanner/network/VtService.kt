@@ -43,19 +43,32 @@ interface VtService {
                       @Query("numTrips") numberOfTrips : Int = 8,
                       @Query("format") json : String = "json"
                       ) : Observable<TripResponseModel>
-/*
+
+    @GET("trip")
+     fun getTripIdAndCoord(
+            @Header("Authorization") tokenTypeAccessToken: String,
+            @Query("originId") originId : String,
+            @Query("destCoordLat") destinationLat: String,
+            @Query("destCoordLong") destinationLong: String,
+            @Query("destCoordName") destinationName: String,
+            @Query("maxWalkDist") distance: Int = 1000,
+            @Query("numTrips") numberOfTrips: Int = 8,
+            @Query("format") json: String = "json"
+
+    ): Observable<TripResponseModel>
+
     @GET("trip")
      fun getTripCoordAndId(
             @Header("Authorization") tokenTypeAccessToken: String,
             @Query("originCoordLat") originLat: String,
             @Query("originCoordLong") originLong: String,
             @Query("originCoordName") originAddressName: String,
-            @Query("maxWalkDist") distance: Int,
             @Query("destId") destinationId: String,
-            @Query("numTrips") numberOfTrips: Int,
-            @Query("format") json: String
+            @Query("maxWalkDist") distance: Int = 1000,
+            @Query("numTrips") numberOfTrips: Int = 8,
+            @Query("format") json: String = "json"
 
-    ): Observable<VtTripResponseModel>
+    ): Observable<TripResponseModel>
 
     @GET("trip")
      fun getTripCoordAndCoord(
@@ -63,12 +76,12 @@ interface VtService {
             @Query("originCoordLat") originLat: String,
             @Query("originCoordLong") originLong: String,
             @Query("originCoordName") originAddressName: String,
-            @Query("maxWalkDist") distance: Int,
             @Query("destCoordLat") destinationLat: String,
             @Query("destCoordLong") destinationLong: String,
             @Query("destCoordName") destinationName: String,
-            @Query("numTrips") numberOfTrips: Int,
-            @Query("format") json: String
+            @Query("maxWalkDist") distance: Int = 1000,
+            @Query("numTrips") numberOfTrips: Int = 8,
+            @Query("format") json: String = "json"
 
-    ): Observable<VtTripResponseModel>*/
+    ): Observable<TripResponseModel>
 }

@@ -5,7 +5,6 @@ import com.egenvall.travelplanner.network.Repository
 import com.egenvall.travelplanner.network.RestDataSource
 import com.egenvall.travelplanner.network.VtService
 import com.egenvall.travelplanner.util.ObjectAsListJsonAdapterFactory
-import com.egenvall.travelplanner.util.ObjectToListJsonAdapter
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Module
