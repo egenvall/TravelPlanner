@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 
 @PerScreen
-class SearchPresenter @Inject constructor(private val searchUsecase: SearchUsecase) : BasePresenter<SearchPresenter.View>() {
+class SearchPresenter @Inject constructor(private val searchUsecase: SearchUsecase, private val searchTripByStopsUsecase: SearchTripByStopsUsecase) : BasePresenter<SearchPresenter.View>() {
 
    @Inject lateinit var realm : Realm
     val TAG  = "SearchPresenter"
@@ -21,6 +21,10 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
     override fun unsubscribe() {
         searchUsecase.unsubscribe()
     }
+
+//===================================================================================
+// Usecase Methods
+//===================================================================================
 
     /**
      * Introduce RxBindings when it's available for RxJava2
@@ -53,9 +57,32 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         })
     }
 
-    fun searchForTrip(origin: StopLocation, dest: StopLocation){
-        Log.d(TAG, "Searching for trip from ${origin.name} to ${dest.name}")
+    fun searchForTripByLocations(origin: StopLocation, dest: StopLocation){
+        addToSearchHistory(origin,dest)
+        searchTripByStopsUsecase.searchTripsByStops(origin.id,dest.id, object : DisposableObserver<TripResponseModel>() {
+
+            override fun onNext(value: TripResponseModel) {
+                view.setTripResults(value.TripList.Trip)
+
+
+
+            }
+
+            override fun onError(e: Throwable?) {
+                view.showMessage(e.toString())
+                Log.e(TAG,e.toString())
+            }
+
+            override fun onComplete() { }
+
+
+        })
     }
+
+
+//===================================================================================
+// Realm Methods
+//===================================================================================
 
     fun addToSearchHistory(origin : StopLocation, dest : StopLocation){
         val history = realm.where(SearchHistory::class.java).findFirst()
@@ -111,9 +138,15 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
             view.setSearchHistory(realm.copyFromRealm(result))
         }
     }
+
+//===================================================================================
+// View Interface
+//===================================================================================
+
     interface View : BaseView {
         fun showMessage(str : String)
         fun setSearchResults(list : List<StopLocation>, wasOrigin: Boolean)
+        fun setTripResults(list : List<Trip>)
         fun setSearchHistory(list : List<SearchPair>)
     }
 }

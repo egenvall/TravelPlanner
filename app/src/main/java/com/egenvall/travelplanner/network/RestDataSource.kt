@@ -1,6 +1,7 @@
 package com.egenvall.travelplanner.network
 
 import com.egenvall.travelplanner.model.AccessToken
+import com.egenvall.travelplanner.model.TripResponseModel
 import com.egenvall.travelplanner.model.VtResponseModel
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -31,9 +32,16 @@ class RestDataSource @Inject constructor(private val service: VtService) : Repos
             if (valid )Observable.just(accessToken)
             else generateAccessToken()
         }}
+    private fun formatTokenString(token: AccessToken) : String{
+        return token.token_type+" "+token.access_token
+    }
 
     override fun getLocationBySearch(searchTerm : String): Observable<VtResponseModel> {
-        return checkValidToken().flatMap { token -> service.getLocationByInput(token.token_type+" "+token.access_token,searchTerm) }
+        return checkValidToken().flatMap { token -> service.getLocationByInput(formatTokenString(token),searchTerm) }
+    }
+
+    override fun getTripByStops(originId: String, destId: String): Observable<TripResponseModel> {
+        return checkValidToken().flatMap { token -> service.getTripIdToId(formatTokenString(token),originId,destId) }
     }
 
 

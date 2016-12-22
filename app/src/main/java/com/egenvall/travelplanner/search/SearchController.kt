@@ -19,6 +19,7 @@ import com.egenvall.travelplanner.common.injection.module.ActivityModule
 import com.egenvall.travelplanner.extension.*
 import com.egenvall.travelplanner.model.SearchPair
 import com.egenvall.travelplanner.model.StopLocation
+import com.egenvall.travelplanner.model.Trip
 import com.jakewharton.rxbinding.widget.RxTextView
 import kotlinx.android.synthetic.main.screen_search.view.*
 import rx.Subscription
@@ -49,10 +50,9 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     lateinit var destText : EditText
     val TAG = "SearchController"
 
-
-    //===================================================================================
-    // Lifecycle methods and initialization
-    //===================================================================================
+//===================================================================================
+//     Lifecycle methods and initialization
+//===================================================================================
     override fun onViewBound(view: View) {
         initInjection()
         view.search_expand_btn.setOnClickListener {toggleExpandableView(view)}
@@ -77,7 +77,9 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         mRecyclerDestination.layoutManager = LinearLayoutManager(applicationContext)
         mDestAdapter = SearchAdapter(mutableListOf<StopLocation>()){ clickedDest(it) }
         mRecyclerDestination.adapter = mDestAdapter
-        view.search_button.setOnClickListener { presenter.searchForTrip(mOrigin!!,mDestination!!) }
+        view.search_button.setOnClickListener {
+            presenter.searchForTripByLocations(mOrigin!!,mDestination!!)
+        }
 
         /**
          * Start subscription for edittexts
@@ -85,19 +87,6 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         startOriginSubscription()
         startDestinationSubscription()
     }
-
-    fun swapOriginDestination(){
-        editOrgSubscription.unsubscribe()
-        editDestSubscription.unsubscribe()
-        val tmpSwap = mOrigin
-        mOrigin = mDestination
-        mDestination = tmpSwap
-        originText.setText(mOrigin?.name)
-        destText.setText(mDestination?.name)
-        startOriginSubscription()
-        startDestinationSubscription()
-    }
-
 
     fun getEditTextSub(edit : EditText, origin : Boolean) : Subscription{
         edit.setSelectAllOnFocus(true)
@@ -123,7 +112,18 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     }
 
 
+//===================================================================================
+// Presenter Methods
+//===================================================================================
+    fun searchForLocation(searchTerm : String, originRequested : Boolean){
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
+        presenter.searchForLocation(searchTerm,originRequested)
+    }
 
+//===================================================================================
+// UI Elements and Interaction
+//===================================================================================
 
     fun hideSearchButton(){
         with(view?.search_button) {
@@ -149,11 +149,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         checkOriginAndDest()
         startDestinationSubscription()
     }
-    private fun checkOriginAndDest(){
-        if ((mOrigin != null) and (mDestination!=null)) showSearchButton()
-        else hideSearchButton()
 
-    }
 
     fun clickedOrigin(item : StopLocation){
         editOrgSubscription.unsubscribe()
@@ -162,13 +158,6 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         mOrigin = item
         checkOriginAndDest()
         startOriginSubscription()
-    }
-
-
-    fun searchForLocation(searchTerm : String, originRequested : Boolean){
-        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
-        presenter.searchForLocation(searchTerm,originRequested)
     }
 
     fun toggleExpandableView(view:View){
@@ -184,6 +173,26 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         }
     }
 
+//===================================================================================
+// Helper Methods
+//===================================================================================
+    private fun checkOriginAndDest(){
+        if ((mOrigin != null) and (mDestination!=null)) showSearchButton()
+        else hideSearchButton()
+
+    }
+
+    fun swapOriginDestination(){
+        editOrgSubscription.unsubscribe()
+        editDestSubscription.unsubscribe()
+        val tmpSwap = mOrigin
+        mOrigin = mDestination
+        mDestination = tmpSwap
+        originText.setText(mOrigin?.name)
+        destText.setText(mDestination?.name)
+        startOriginSubscription()
+        startDestinationSubscription()
+    }
 //===================================================================================
 // Dependency injection
 //===================================================================================
@@ -225,6 +234,18 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
             }
         }
 
+    }
+
+    override fun setTripResults(list: List<Trip>) {
+        for (t in list){
+            Log.d(TAG,"-------Trip  Byten: ${t.Leg.filter { it.type != "WALK" }.size-1}----------")
+            for (l in t.Leg.filter { it.type != "WALK" }){
+                Log.d(TAG, ": [${l.Origin.name} - ${l.Destination.name} : ${l.Origin.time} - ${l.Destination.time}")
+
+            }
+            Log.d(TAG,"--------------------")
+
+        }
     }
 
     override fun setSearchHistory(list: List<SearchPair>) {

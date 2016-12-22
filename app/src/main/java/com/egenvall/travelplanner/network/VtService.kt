@@ -1,6 +1,7 @@
 package com.egenvall.travelplanner.network
 
 import com.egenvall.travelplanner.model.AccessToken
+import com.egenvall.travelplanner.model.TripResponseModel
 import com.egenvall.travelplanner.model.VtResponseModel
 import io.reactivex.Observable
 import retrofit2.http.*
@@ -34,6 +35,14 @@ interface VtService {
             @Query("format") json: String
 
     ): Observable<VtResponseModel>
+
+    @GET("trip")
+    fun getTripIdToId(@Header("Authorization") tokenTypeAccessToken: String,
+                      @Query("originId") originId : String,
+                      @Query("destId") destId : String,
+                      @Query("numTrips") numberOfTrips : Int = 8,
+                      @Query("format") json : String = "json"
+                      ) : Observable<TripResponseModel>
 /*
     @GET("trip")
      fun getTripCoordAndId(

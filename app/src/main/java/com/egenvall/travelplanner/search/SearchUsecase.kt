@@ -17,6 +17,8 @@ class SearchUsecase @Inject constructor(val repository: Repository, uiExec : And
         this.searchTerm = searchTerm
         super.executeUseCase(presenterObserver)
     }
+
+
     override fun useCaseObservable(): Observable<VtResponseModel> {
         return repository.getLocationBySearch(searchTerm)
     }

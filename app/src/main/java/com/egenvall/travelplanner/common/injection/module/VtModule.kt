@@ -4,7 +4,10 @@ import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.network.Repository
 import com.egenvall.travelplanner.network.RestDataSource
 import com.egenvall.travelplanner.network.VtService
+import com.egenvall.travelplanner.util.ObjectAsListJsonAdapterFactory
+import com.egenvall.travelplanner.util.ObjectToListJsonAdapter
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -17,16 +20,23 @@ import javax.inject.Singleton
 @Module
  class VtModule(private val app : TravelPlanner) {
     val baseUrl = "https://api.vasttrafik.se/bin/rest.exe/v2/"
+
     @Singleton
     @Provides
-    internal fun provideRetrofit(): Retrofit {
+    internal  fun provideMoshi() : MoshiConverterFactory{
+        val m = Moshi.Builder().add(ObjectAsListJsonAdapterFactory()).build()
+        return MoshiConverterFactory.create(m)
+    }
+    @Singleton
+    @Provides
+    internal fun provideRetrofit(moshiConverterFactory: MoshiConverterFactory): Retrofit {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
         val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(moshiConverterFactory)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
         return retrofit
