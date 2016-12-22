@@ -7,8 +7,18 @@
         <item name="android:textColorPrimary">@color/material_text_primary</item>
         <item name="android:textColorSecondary">@color/material_text_secondary</item>
         <item name="android:windowBackground">@android:color/white</item>
+
+    </style>
+    <style name="PrimaryButton" parent="Theme.AppCompat">
+        <item name="colorButtonNormal">@color/material_adjacent_button_purple</item>
+        <item name="colorControlHighlight">@color/material_primary_light</item>
     </style>
 
+    <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+        <item name="colorControlHighlight">@color/material_primary_light</item>
+        <item name="colorAccent">@color/material_primary</item>
+    </style>
     <style name="AppTheme" parent="AppTheme.Base">
 
     </style>

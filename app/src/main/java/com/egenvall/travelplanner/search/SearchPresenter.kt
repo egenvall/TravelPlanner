@@ -1,5 +1,6 @@
 package com.egenvall.travelplanner.search
 
+import android.util.Log
 import com.egenvall.travelplanner.base.presentation.BasePresenter
 import com.egenvall.travelplanner.base.presentation.BaseView
 import com.egenvall.travelplanner.common.injection.scope.PerScreen
@@ -13,6 +14,7 @@ import javax.inject.Inject
 class SearchPresenter @Inject constructor(private val searchUsecase: SearchUsecase) : BasePresenter<SearchPresenter.View>() {
 
    @Inject lateinit var realm : Realm
+    val TAG  = "SearchPresenter"
     /**
      * Called when view is detached
      */
@@ -49,6 +51,10 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
             override fun onError(e: Throwable?)  = view.showMessage(e.toString())
             override fun onComplete() {}
         })
+    }
+
+    fun searchForTrip(origin: StopLocation, dest: StopLocation){
+        Log.d(TAG, "Searching for trip from ${origin.name} to ${dest.name}")
     }
 
     fun addToSearchHistory(origin : StopLocation, dest : StopLocation){

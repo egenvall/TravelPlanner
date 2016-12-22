@@ -16,7 +16,7 @@
     android:layout_height="wrap_content"
     android:background="@color/material_primary_dark"
     tools:layout_editor_absoluteY="0dp"
-    tools:layout_editor_absoluteX="0dp">
+    tools:layout_editor_absoluteX="0dp"
     >
 
 
@@ -153,6 +153,18 @@
         />
 
 
+    <!-- Search Button -->
+    <Button
+        android:id="@+id/search_button"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:text="@string/search"
+        android:theme="@style/PrimaryButton"
+        app:layout_constraintTop_toBottomOf="@+id/padderview"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"
+        />
     <!-- EXPAND BUTTON -->
     <ImageButton
         android:layout_width="wrap_content"
@@ -162,7 +174,7 @@
         android:id="@+id/search_expand_btn"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/padderview" />
+        app:layout_constraintTop_toBottomOf="@+id/search_button" />
 
     <View
         android:id="@+id/padderview"
@@ -186,7 +198,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:background="@color/material_accent"
             android:text="Fixed height"
             />
     </net.cachapa.expandablelayout.ExpandableLayout>

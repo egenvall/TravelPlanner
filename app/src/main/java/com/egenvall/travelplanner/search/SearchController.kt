@@ -16,14 +16,13 @@ import com.egenvall.travelplanner.base.presentation.BaseController
 import com.egenvall.travelplanner.common.injection.component.DaggerSearchViewComponent
 import com.egenvall.travelplanner.common.injection.component.SearchViewComponent
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
-import com.egenvall.travelplanner.extension.getDrawable
-import com.egenvall.travelplanner.extension.setDrawable
-import com.egenvall.travelplanner.extension.showSnackbar
+import com.egenvall.travelplanner.extension.*
 import com.egenvall.travelplanner.model.SearchPair
 import com.egenvall.travelplanner.model.StopLocation
 import com.jakewharton.rxbinding.widget.RxTextView
 import kotlinx.android.synthetic.main.screen_search.view.*
 import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.Subscriptions
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -39,10 +38,11 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     lateinit private var mRecyclerDestination : RecyclerView
     lateinit private var mOriginAdapter : SearchAdapter
     lateinit private var mDestAdapter : SearchAdapter
-    lateinit private var mOrigin : StopLocation
-    lateinit private var mDestination : StopLocation
+    private var mOrigin : StopLocation? = null
+    private var mDestination : StopLocation? = null
     private var editOrgSubscription = Subscriptions.unsubscribed()
     private var editDestSubscription = Subscriptions.unsubscribed()
+    private var animCount = 0
 
 
     lateinit var originText : EditText
@@ -57,7 +57,6 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         initInjection()
         view.search_expand_btn.setOnClickListener {toggleExpandableView(view)}
         view.search_swap_btn.setOnClickListener { swapOriginDestination() }
-
         originText = view.origin_edt
         destText = view.desination_edt
 
@@ -78,6 +77,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         mRecyclerDestination.layoutManager = LinearLayoutManager(applicationContext)
         mDestAdapter = SearchAdapter(mutableListOf<StopLocation>()){ clickedDest(it) }
         mRecyclerDestination.adapter = mDestAdapter
+        view.search_button.setOnClickListener { presenter.searchForTrip(mOrigin!!,mDestination!!) }
 
         /**
          * Start subscription for edittexts
@@ -92,8 +92,8 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         val tmpSwap = mOrigin
         mOrigin = mDestination
         mDestination = tmpSwap
-        originText.setText(mOrigin.name)
-        destText.setText(mDestination.name)
+        originText.setText(mOrigin?.name)
+        destText.setText(mDestination?.name)
         startOriginSubscription()
         startDestinationSubscription()
     }
@@ -106,7 +106,9 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
                 .map { s -> s.toString()}
                 .throttleLast(200,TimeUnit.MILLISECONDS) //Emit only the last item in 200ms interval
                 .debounce (750, TimeUnit.MILLISECONDS)   //Emit the last item if 750ms has passed with no more emits
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ finalText ->
+                    hideSearchButton()
                     if (finalText.length >=3){
                         searchForLocation(finalText,origin)
                     }
@@ -121,12 +123,36 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     }
 
 
+
+
+    fun hideSearchButton(){
+        with(view?.search_button) {
+            this?.animate()?.alpha(0.0f)?.setDuration(300)
+                    ?.withEndAction { view?.search_button?.hide() }
+        }
+
+    }
+    fun showSearchButton(){
+        with(view?.search_button){
+            this?.show()
+            this?.alpha = 0.0f
+            this?.animate()?.alpha(1.0f)?.setDuration(300)
+        }
+    }
+
+
     fun clickedDest(item: StopLocation){
         editDestSubscription.unsubscribe()
         destText.setText(item.name)
         view?.expandable_layout_destination_search?.collapse(true)
         mDestination = item
+        checkOriginAndDest()
         startDestinationSubscription()
+    }
+    private fun checkOriginAndDest(){
+        if ((mOrigin != null) and (mDestination!=null)) showSearchButton()
+        else hideSearchButton()
+
     }
 
     fun clickedOrigin(item : StopLocation){
@@ -134,6 +160,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         originText.setText(item.name)
         view?.expandable_layout_origin_search?.collapse(true)
         mOrigin = item
+        checkOriginAndDest()
         startOriginSubscription()
     }
 
