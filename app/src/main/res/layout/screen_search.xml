@@ -206,7 +206,7 @@
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search_recycler"
+        android:id="@+id/history_recycler"
         android:background="@color/material_primary_light"
         app:layout_constraintTop_toBottomOf="@id/search_top_bg"
         app:layout_constraintLeft_toLeftOf="parent" />

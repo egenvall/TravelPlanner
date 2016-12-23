@@ -22,6 +22,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         searchUsecase.unsubscribe()
     }
 
+
 //===================================================================================
 // Usecase Methods
 //===================================================================================
@@ -57,6 +58,10 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         })
     }
 
+    fun searchForTripByLocations(origin : RealmStopLocation, dest: RealmStopLocation){
+        searchForTripByLocations(mapToStopLocation(origin),mapToStopLocation(dest))
+    }
+
     fun searchForTripByLocations(origin: StopLocation, dest: StopLocation){
         addToSearchHistory(origin,dest)
         searchTripByStopsUsecase.searchTripsByStops(origin,dest, object : DisposableObserver<TripResponseModel>() {
@@ -73,7 +78,9 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
                 Log.e(TAG,e.toString())
             }
 
-            override fun onComplete() { }
+            override fun onComplete() {
+                getSearchHistory()
+            }
 
 
         })
@@ -98,7 +105,19 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
     }
 
     fun constructPkSearchPair(origin: StopLocation, dest: StopLocation):String{
-        return origin.id+"/"+dest.id
+        var originIdentifier : String = ""
+        var destIdentifier : String = ""
+        when(origin.type){
+            "STOP" -> originIdentifier = origin.id
+            "ADR" -> originIdentifier = origin.name
+            "POI" -> originIdentifier = origin.name
+        }
+        when (dest.type){
+            "STOP" -> destIdentifier = dest.id
+            "ADR" -> destIdentifier = dest.name
+            "POI" -> destIdentifier = dest.name
+        }
+        return originIdentifier+"/"+destIdentifier
     }
     fun addPairToRealm(origin: StopLocation, dest: StopLocation){
         val history = realm.where(SearchHistory::class.java).findFirst()
@@ -117,9 +136,15 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
             }
         }
     }
+
+    private fun mapToStopLocation(stop : RealmStopLocation) : StopLocation{
+        with(stop){
+            return StopLocation(stopid,type,lat,lon,idx,name)
+        }
+    }
     private fun mapToRealmStopLocation(stop : StopLocation) : RealmStopLocation{
         with(stop){
-            return RealmStopLocation(id,type,lon,lat,idx,name)
+            return RealmStopLocation(id,type,lat,lon,idx,name)
         }
     }
 
@@ -134,6 +159,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
 
     fun getSearchHistory(){
         realm.executeTransaction {
+            //val res = realm.where(SearchHistory::class.java).findFirst().list.deleteAllFromRealm()
             val result = realm.where(SearchHistory::class.java).findFirst().list.distinct()
             view.setSearchHistory(realm.copyFromRealm(result))
         }

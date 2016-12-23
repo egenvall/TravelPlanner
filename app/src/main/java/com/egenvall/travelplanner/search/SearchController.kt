@@ -12,6 +12,7 @@ import android.widget.EditText
 import com.egenvall.travelplanner.R
 import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.adapter.SearchAdapter
+import com.egenvall.travelplanner.adapter.SearchHistoryAdapter
 import com.egenvall.travelplanner.base.presentation.BaseController
 import com.egenvall.travelplanner.common.injection.component.DaggerSearchViewComponent
 import com.egenvall.travelplanner.common.injection.component.SearchViewComponent
@@ -37,13 +38,14 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     @LayoutRes override val layoutResId: Int = R.layout.screen_search
     lateinit private var mRecyclerOrigin : RecyclerView
     lateinit private var mRecyclerDestination : RecyclerView
+    lateinit private var mRecyclerHistory : RecyclerView
     lateinit private var mOriginAdapter : SearchAdapter
     lateinit private var mDestAdapter : SearchAdapter
+    lateinit private var mHistoryAdapter : SearchHistoryAdapter
     private var mOrigin : StopLocation? = null
     private var mDestination : StopLocation? = null
     private var editOrgSubscription = Subscriptions.unsubscribed()
     private var editDestSubscription = Subscriptions.unsubscribed()
-    private var animCount = 0
 
 
     lateinit var originText : EditText
@@ -77,7 +79,20 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         mRecyclerDestination.layoutManager = LinearLayoutManager(applicationContext)
         mDestAdapter = SearchAdapter(mutableListOf<StopLocation>()){ clickedDest(it) }
         mRecyclerDestination.adapter = mDestAdapter
-        view.search_button.setOnClickListener {
+
+    /**
+     * Search History
+     */
+
+    mRecyclerHistory = view.history_recycler
+    mRecyclerHistory.setHasFixedSize(false)
+    mRecyclerHistory.layoutManager = LinearLayoutManager(applicationContext)
+    mHistoryAdapter = SearchHistoryAdapter(mutableListOf<SearchPair>()){clickedHistoryPair(it)}
+    mRecyclerHistory.adapter = mHistoryAdapter
+
+
+
+    view.search_button.setOnClickListener {
             presenter.searchForTripByLocations(mOrigin!!,mDestination!!)
         }
 
@@ -104,6 +119,11 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
                 })
     }
 
+    override fun onAttach(view: View) {
+        super.onAttach(view)
+        presenter.getSearchHistory()
+    }
+
     fun startOriginSubscription(){
         editOrgSubscription = getEditTextSub(originText,true)
     }
@@ -125,6 +145,9 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
 // UI Elements and Interaction
 //===================================================================================
 
+    fun clickedHistoryPair(pair : SearchPair){
+        presenter.searchForTripByLocations(pair.origin,pair.destination)
+    }
     fun hideSearchButton(){
         with(view?.search_button) {
             this?.animate()?.alpha(0.0f)?.setDuration(300)
@@ -253,5 +276,8 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
             Log.d(TAG,"${p.orgPlusDestId}")
         }
         Log.d(TAG,"-----------")
+
+        mHistoryAdapter.historyList = list
+        mHistoryAdapter.notifyDataSetChanged()
     }
 }

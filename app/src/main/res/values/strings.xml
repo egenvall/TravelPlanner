@@ -9,6 +9,7 @@
 
 
     <!-- SEARCH SCREEN STRINGS -->
+    <string name="origin">Origin</string>
     <string name="search_title">SÖK RESA</string>
     <string name="origin_hint">My Location</string>
     <string name="destination_hint">Destination</string>
