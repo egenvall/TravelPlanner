@@ -208,6 +208,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/history_recycler"
         android:background="@color/material_primary_light"
-        app:layout_constraintTop_toBottomOf="@id/search_top_bg"
+        app:layout_constraintTop_toBottomOf="@id/expandable_layout"
         app:layout_constraintLeft_toLeftOf="parent" />
     </android.support.constraint.ConstraintLayout>
