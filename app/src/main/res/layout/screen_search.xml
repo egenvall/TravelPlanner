@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/search_constraint_layout_main"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,7 +8,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/search_top_bg"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -201,13 +203,27 @@
             android:text="Fixed height"
             />
     </net.cachapa.expandablelayout.ExpandableLayout>
-
-    <!-- Recycler Review For Trips -->
-    <android.support.v7.widget.RecyclerView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/expandable_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="64dp"
+        >
+
+
+         <!-- Recycler Review For Trips -->
+    <android.support.v7.widget.RecyclerView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/history_recycler"
         android:background="@color/material_primary_light"
-        app:layout_constraintTop_toBottomOf="@id/expandable_layout"
-        app:layout_constraintLeft_toLeftOf="parent" />
+         />
+
+    </FrameLayout>
+
+
     </android.support.constraint.ConstraintLayout>
