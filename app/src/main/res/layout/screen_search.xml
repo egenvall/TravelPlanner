@@ -6,7 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+>
 
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -199,31 +200,30 @@
         app:el_translate_children="true">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="100dp"
             android:text="Fixed height"
             />
     </net.cachapa.expandablelayout.ExpandableLayout>
-    <FrameLayout
+
+
+<!-- Search History -->
+
+    <TextView
+        android:id="@+id/search_history_text"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:background="@color/material_adjacent_button_purple"
+        android:text="@string/search_history"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/expandable_layout"
+        android:textColor="@color/material_text_icons"
+
+        />
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/expandable_layout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginBottom="64dp"
-        >
-
-
-         <!-- Recycler Review For Trips -->
-    <android.support.v7.widget.RecyclerView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_scrollFlags="scroll|enterAlways"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/history_recycler"
         android:background="@color/material_primary_light"
+        app:layout_constraintTop_toBottomOf="@id/search_history_text"
          />
-
-    </FrameLayout>
-
-
     </android.support.constraint.ConstraintLayout>

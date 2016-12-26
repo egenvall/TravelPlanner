@@ -5,13 +5,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_accent"
 >
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="65dp"
+
         />
     <devlight.io.library.ntb.NavigationTabBar
     android:layout_gravity="bottom"
@@ -20,7 +20,6 @@
     android:layout_height="64dp"
     app:ntb_animation_duration="400"
     app:ntb_preview_colors="@array/red_wine"
-    app:ntb_corners_radius="10dp"
     app:ntb_active_color="#fff"
     app:ntb_inactive_color="#000"
     app:ntb_badged="true"
@@ -36,6 +35,7 @@
     app:ntb_swiped="true"
     app:ntb_icon_size_fraction="0.5"
     app:ntb_badge_size="10sp"
-    app:ntb_title_size="10sp"/>
+    app:ntb_title_size="10sp"
+    android:background="@color/cardview_light_background"/>
 
 </FrameLayout>

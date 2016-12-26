@@ -5,10 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center"
     android:layout_width="match_parent"
-    android:layout_marginBottom="@dimen/card_bottom_top"
     android:layout_marginTop="@dimen/card_bottom_top"
     card_view:cardCornerRadius="@dimen/card_bottom_top"
-    android:layout_height="64dp"
+    android:layout_height="63dp"
     >
 
     <android.support.constraint.ConstraintLayout

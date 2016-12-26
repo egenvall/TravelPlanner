@@ -131,7 +131,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         realm.executeTransaction {
             with(history.list) {
                 deleteAllFromRealm()
-                realm.copyToRealmOrUpdate(copy)
+                realm.copyToRealmOrUpdate(copy.take(6))
                 addAll(copy.distinctBy { it.orgPlusDestId })
             }
         }
@@ -161,7 +161,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         realm.executeTransaction {
             //val res = realm.where(SearchHistory::class.java).findFirst().list.deleteAllFromRealm()
             val result = realm.where(SearchHistory::class.java).findFirst().list.distinct()
-            view.setSearchHistory(realm.copyFromRealm(result))
+            view.setSearchHistory(realm.copyFromRealm(result).take(6))
         }
     }
 

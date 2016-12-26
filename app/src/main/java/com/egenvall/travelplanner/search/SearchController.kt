@@ -89,6 +89,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     mRecyclerHistory.layoutManager = LinearLayoutManager(applicationContext)
     mHistoryAdapter = SearchHistoryAdapter(mutableListOf<SearchPair>()){clickedHistoryPair(it)}
     mRecyclerHistory.adapter = mHistoryAdapter
+    mRecyclerHistory.setNestedScrollingEnabled(false);
 
 
 
