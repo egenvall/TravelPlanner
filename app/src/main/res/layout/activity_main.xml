@@ -10,7 +10,6 @@
         android:id="@+id/controller_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/cardview_dark_background"
         tools:context=".ui.MainActivity">
     </com.bluelinelabs.conductor.ChangeHandlerFrameLayout>
 

@@ -68,6 +68,7 @@ dependencies {
     compile "com.squareup.retrofit2:converter-moshi:2.0.0"
 
     compile 'devlight.io:navigationtabbar:1.2.5'
+    compile 'com.github.florent37:singledateandtimepicker:1.0.0'
     compile 'net.cachapa.expandablelayout:expandablelayout:2.3'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 

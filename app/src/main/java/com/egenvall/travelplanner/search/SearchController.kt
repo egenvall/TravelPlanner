@@ -28,6 +28,9 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.subscriptions.Subscriptions
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class SearchController : BaseController<SearchPresenter.View, SearchPresenter>(),
@@ -96,6 +99,22 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     view.search_button.setOnClickListener {
             presenter.searchForTripByLocations(mOrigin!!,mDestination!!)
         }
+
+    val format = SimpleDateFormat("EEE ddMMM HH:mm",Locale.getDefault())
+
+    view.datetime_button.text = format.format(Date())
+
+    view.datetime_button.setOnClickListener {
+        SingleDateAndTimePickerDialog.Builder(activity)
+                .bottomSheet()
+                .title("Simple")
+                .listener(object : SingleDateAndTimePickerDialog.Listener {
+                    override fun onDateSelected(date: Date) {
+                        Log.d(TAG,"Chose Date: ${date.toString()}")
+                        view.datetime_button.text = format.format(date)
+                    }
+                }).display()
+    }
 
         /**
          * Start subscription for edittexts
