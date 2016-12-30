@@ -20,6 +20,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
      */
     override fun unsubscribe() {
         searchUsecase.unsubscribe()
+        searchTripByStopsUsecase.unsubscribe()
     }
 
 

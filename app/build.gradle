@@ -81,8 +81,10 @@ dependencies {
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-all:$rootProject.mockitoVersion"
     testCompile "org.hamcrest:hamcrest-all:$rootProject.hamcrestVersion"
-    testCompile "org.powermock:powermock-module-junit4:$rootProject.powerMockito"
-    testCompile "org.powermock:powermock-api-mockito:$rootProject.powerMockito"
+    //testCompile "org.powermock:powermock-module-junit4:$rootProject.powerMockito"
+    //testCompile "org.powermock:powermock-api-mockito:$rootProject.powerMockito"
+        testCompile "com.nhaarman:mockito-kotlin:0.12.1"
+
 
     androidTestCompile "com.android.support.test:runner:$rootProject.runnerVersion"
     androidTestCompile "com.android.support.test:rules:$rootProject.rulesVersion"

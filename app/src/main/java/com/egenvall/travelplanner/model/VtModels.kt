@@ -14,7 +14,7 @@ data class StopLocation( val id : String = "id",  val type : String = "STOP",
                           val lat : Double = 0.0,
                          val lon : Double = 0.0,  val idx : String = "idx",
                          val name : String = "Stopname")
-data class CoordLocation( val type : String = "type",  val lon : Double = 0.0,  val lat : Double = 0.0,  val idx : String ="idx",  val name : String ="Coordname")
+data class CoordLocation( val type : String = "ADR",  val lon : Double = 0.0,  val lat : Double = 0.0,  val idx : String ="idx",  val name : String ="Coordname")
 
 data class TripResponseModel(val TripList : TripList)
 data class TripList(val error : String?, val errorText: String?, val Trip : List<Trip>)

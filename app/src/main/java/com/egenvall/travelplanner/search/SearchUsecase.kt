@@ -10,7 +10,7 @@ import io.reactivex.observers.DisposableObserver
 import javax.inject.Inject
 
 
-class SearchUsecase @Inject constructor(val repository: Repository, uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<VtResponseModel>(uiExec,ioExec) {
+open class SearchUsecase @Inject constructor(val repository: Repository, uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<VtResponseModel>(uiExec,ioExec) {
 
     var searchTerm ="will-be-replaced"
     fun searchForLocation(searchTerm :String, presenterObserver : DisposableObserver<VtResponseModel>){

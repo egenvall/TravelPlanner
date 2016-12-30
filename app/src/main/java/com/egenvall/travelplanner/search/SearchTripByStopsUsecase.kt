@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 
 
-class SearchTripByStopsUsecase @Inject constructor(val repository: Repository, uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<TripResponseModel>(uiExec,ioExec) {
+open class SearchTripByStopsUsecase @Inject constructor(val repository: Repository, uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<TripResponseModel>(uiExec,ioExec) {
 
     var origin = StopLocation()
     var dest = StopLocation()
