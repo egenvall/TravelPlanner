@@ -5,11 +5,11 @@ The project is a work in progress, design etc is unfinished.
 The goal of this project is to create a simplified, easier to use Travel Planner for Gothenburg's local traffic.
 
 ###The learning purpose is:  
-Material Design Guidelines   
-Working with RxJava2/RxAndroid2 (and interaction with RxJava & RxAndroid).  
-Complex Layouts through ConstraintLayout.
-Working with a "flawed" API in the sense that it does not behave the same depending on what is returned, i.e irregular JSON response.  
-Persisting user information  
+- Material Design Guidelines   
+- Working with RxJava2/RxAndroid2 (and interaction with RxJava & RxAndroid).  
+- Complex Layouts through ConstraintLayout.
+- Working with a "flawed" API in the sense that it does not behave the same depending on what is returned, i.e irregular JSON response.  
+- Persisting user information  
 
 ##End-game features:
 Customizable favourites, Search History, Location based search, Tourist mode, Directions to the relevant stop + feature requests.
@@ -22,13 +22,13 @@ Customizable favourites, Search History, Location based search, Tourist mode, Di
 
 
 ##Technologies used:
-Kotlin
-RxJava 1 & 2
-Realm
-Dagger2
-Mockito
-Espresso
-Retrofit 2
-Conductor
+- Kotlin
+- RxJava 1 & 2
+- Realm
+- Dagger2
+- Mockito
+- Espresso
+- Retrofit 2
+- Conductor
 
 
