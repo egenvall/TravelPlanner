@@ -88,11 +88,10 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
      */
 
     mRecyclerHistory = view.history_recycler
-    mRecyclerHistory.setHasFixedSize(false)
+    mRecyclerHistory.setHasFixedSize(true)
     mRecyclerHistory.layoutManager = LinearLayoutManager(applicationContext)
     mHistoryAdapter = SearchHistoryAdapter(mutableListOf<SearchPair>()){clickedHistoryPair(it)}
     mRecyclerHistory.adapter = mHistoryAdapter
-    mRecyclerHistory.setNestedScrollingEnabled(false);
 
 
 
