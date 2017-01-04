@@ -4,6 +4,16 @@ The project is a work in progress, design etc is unfinished.
 
 The goal of this project is to create a simplified, easier to use Travel Planner for Gothenburg's local traffic.
 
+###Roadmap
+- Search Screen functionality 80%
+- Tests for Search Screen (UI + Presenter) 0%
+- Favourites Screen and functionality 0%
+- Tests for Favourites (UI + presenter) 0%
+- Settings screen 0%
+- Settings tests 0%
+- Rework design & icons 0%
+
+
 ###The learning purpose is:  
 - Material Design Guidelines   
 - Working with RxJava2/RxAndroid2 (and interaction with RxJava & RxAndroid).  
