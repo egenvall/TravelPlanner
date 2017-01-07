@@ -6,8 +6,8 @@ import com.egenvall.travelplanner.common.threading.RxIoExecutor
 import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.TripResponseModel
 import com.egenvall.travelplanner.network.Repository
-import io.reactivex.Observable
-import io.reactivex.observers.DisposableObserver
+import rx.Observable
+import rx.Observer
 import javax.inject.Inject
 
 
@@ -16,10 +16,10 @@ open class SearchTripByStopsUsecase @Inject constructor(val repository: Reposito
 
     var origin = StopLocation()
     var dest = StopLocation()
-    fun searchTripsByStops(origin : StopLocation, dest : StopLocation, presenterObserver : DisposableObserver<TripResponseModel>){
+    fun searchTripsByStops(origin : StopLocation, dest : StopLocation, presenterObserver : Observer<TripResponseModel>){
         this.origin = origin
         this.dest = dest
-        super.executeUseCase(presenterObserver)
+        super.executeUseCase({presenterObserver.onNext(it)},{presenterObserver.onError(it)},{})
     }
 
     private fun fromStopId() : Observable<TripResponseModel> {

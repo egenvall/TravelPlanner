@@ -4,7 +4,7 @@ import com.egenvall.travelplanner.model.AccessToken
 import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.TripResponseModel
 import com.egenvall.travelplanner.model.VtResponseModel
-import io.reactivex.Observable
+import rx.Observable
 import javax.inject.Inject
 
 

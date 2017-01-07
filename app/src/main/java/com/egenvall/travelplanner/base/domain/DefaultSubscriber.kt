@@ -1,9 +1,10 @@
 package com.egenvall.travelplanner.base.domain
 
+import io.reactivex.observers.DisposableObserver
 import io.reactivex.subscribers.ResourceSubscriber
 
 
-class DefaultSubscriber<T> : ResourceSubscriber<T>() {
+open class DefaultSubscriber<T> : DisposableObserver<T>() {
     override fun onComplete() {
     }
 

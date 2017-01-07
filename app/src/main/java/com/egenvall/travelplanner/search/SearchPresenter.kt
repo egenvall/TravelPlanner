@@ -1,12 +1,14 @@
 package com.egenvall.travelplanner.search
 
 import android.util.Log
+import com.egenvall.travelplanner.base.domain.DefaultSubscriber
 import com.egenvall.travelplanner.base.presentation.BasePresenter
 import com.egenvall.travelplanner.base.presentation.BaseView
 import com.egenvall.travelplanner.common.injection.scope.PerScreen
 import com.egenvall.travelplanner.model.*
 import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
+import rx.Observer
 import javax.inject.Inject
 
 
@@ -32,9 +34,10 @@ open class SearchPresenter @Inject constructor(private val searchUsecase: Search
      * Introduce RxBindings when it's available for RxJava2
      */
     open fun searchForLocation(searchTerm : String, wasOrigin : Boolean) {
-        searchUsecase.searchForLocation(searchTerm.trim(),object : DisposableObserver<VtResponseModel>(){
+        searchUsecase.searchForLocation(searchTerm.trim(), object : Observer<VtResponseModel>{
             override fun onNext(response : VtResponseModel){
                 val locationList = response.LocationList
+                if (locationList.error != null) onError(Throwable(locationList.errorText))
 
                 /**
                  * If the response contains no CoordLocation or StopLocation (Nullable in model)
@@ -47,17 +50,18 @@ open class SearchPresenter @Inject constructor(private val searchUsecase: Search
                 val stopList = locationList.StopLocation?: listOf<StopLocation>()
 
                 //Set the view to show 3 most relevant items sorted by relevance
-                view.setSearchResults(
+                performViewAction { setSearchResults(
                         (coordList+stopList)
                                 .filter { it.idx.toInt() <= 3}
-                                .sortedBy {it.idx},wasOrigin)
+                                .sortedBy {it.idx},wasOrigin) }
 
 
             }
-            override fun onError(e: Throwable?)  = view.showMessage(e.toString())
-            override fun onComplete() {}
+            override fun onError(e: Throwable)  = view.showMessage(e.toString())
+            override fun onCompleted() {view.showMessage("")}
         })
     }
+
 
     override fun onViewAttached() {
     }
@@ -71,7 +75,7 @@ open class SearchPresenter @Inject constructor(private val searchUsecase: Search
 
     fun searchForTripByLocations(origin: StopLocation, dest: StopLocation){
         addToSearchHistory(origin,dest)
-        searchTripByStopsUsecase.searchTripsByStops(origin,dest, object : DisposableObserver<TripResponseModel>() {
+        searchTripByStopsUsecase.searchTripsByStops(origin,dest, object : Observer<TripResponseModel> {
 
             override fun onNext(value: TripResponseModel) {
                 view.setTripResults(value.TripList.Trip)
@@ -85,7 +89,7 @@ open class SearchPresenter @Inject constructor(private val searchUsecase: Search
                 Log.e(TAG,e.toString())
             }
 
-            override fun onComplete() {
+            override fun onCompleted() {
                 getSearchHistory()
             }
 
