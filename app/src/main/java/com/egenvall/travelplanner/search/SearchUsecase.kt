@@ -2,9 +2,7 @@ package com.egenvall.travelplanner.search
 
 import com.egenvall.travelplanner.base.domain.ReactiveUseCase
 import com.egenvall.travelplanner.common.threading.AndroidUiExecutor
-import com.egenvall.travelplanner.common.threading.BackgroundExecutor
 import com.egenvall.travelplanner.common.threading.RxIoExecutor
-import com.egenvall.travelplanner.common.threading.UiExecutor
 import com.egenvall.travelplanner.model.VtResponseModel
 import com.egenvall.travelplanner.network.Repository
 import rx.Observable
@@ -21,7 +19,7 @@ open class SearchUsecase @Inject constructor(val repository: Repository, uiExec 
     }
 
     fun executeUsecase(observer : Observer<VtResponseModel>){
-        super.executeUseCase({observer.onNext(it)},{observer.onError(it)},{})
+        super.executeUseCase({observer.onNext(it)},{observer.onError(it)},{observer.onCompleted()})
     }
 
     override fun useCaseObservable(): Observable<VtResponseModel> {

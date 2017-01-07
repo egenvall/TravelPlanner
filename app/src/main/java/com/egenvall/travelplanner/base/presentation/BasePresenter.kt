@@ -24,6 +24,7 @@ abstract class BasePresenter<View: BaseView> {
 
     fun viewDetached() {
         isViewAttached = false
+        unsubscribe()
         onViewDetached()
     }
 

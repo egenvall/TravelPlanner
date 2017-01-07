@@ -1,12 +1,10 @@
 package com.egenvall.travelplanner.search
 
 import android.util.Log
-import com.egenvall.travelplanner.base.domain.DefaultSubscriber
 import com.egenvall.travelplanner.base.presentation.BasePresenter
 import com.egenvall.travelplanner.base.presentation.BaseView
 import com.egenvall.travelplanner.common.injection.scope.PerScreen
 import com.egenvall.travelplanner.model.*
-import io.reactivex.observers.DisposableObserver
 import io.realm.Realm
 import rx.Observer
 import javax.inject.Inject
@@ -50,15 +48,14 @@ open class SearchPresenter @Inject constructor(private val searchUsecase: Search
                 val stopList = locationList.StopLocation?: listOf<StopLocation>()
 
                 //Set the view to show 3 most relevant items sorted by relevance
-                performViewAction { setSearchResults(
-                        (coordList+stopList)
+                performViewAction { setSearchResults((coordList+stopList)
                                 .filter { it.idx.toInt() <= 3}
                                 .sortedBy {it.idx},wasOrigin) }
 
 
             }
-            override fun onError(e: Throwable)  = view.showMessage(e.toString())
-            override fun onCompleted() {view.showMessage("")}
+            override fun onError(e: Throwable)  = performViewAction {showMessage(e.toString())}
+            override fun onCompleted() = performViewAction {showMessage("")}
         })
     }
 
@@ -76,24 +73,14 @@ open class SearchPresenter @Inject constructor(private val searchUsecase: Search
     fun searchForTripByLocations(origin: StopLocation, dest: StopLocation){
         addToSearchHistory(origin,dest)
         searchTripByStopsUsecase.searchTripsByStops(origin,dest, object : Observer<TripResponseModel> {
-
-            override fun onNext(value: TripResponseModel) {
-                view.setTripResults(value.TripList.Trip)
-
-
-
+            override fun onNext(value: TripResponseModel)  = performViewAction{
+                setTripResults(value.TripList.Trip)
             }
-
             override fun onError(e: Throwable?) {
-                view.showMessage(e.toString())
+                performViewAction {showMessage(e.toString())}
                 Log.e(TAG,e.toString())
             }
-
-            override fun onCompleted() {
-                getSearchHistory()
-            }
-
-
+            override fun onCompleted() = getSearchHistory()
         })
     }
 
@@ -172,7 +159,7 @@ open class SearchPresenter @Inject constructor(private val searchUsecase: Search
         realm.executeTransaction {
             //val res = realm.where(SearchHistory::class.java).findFirst().list.deleteAllFromRealm()
             val result = realm.where(SearchHistory::class.java).findFirst().list.distinct()
-            view.setSearchHistory(realm.copyFromRealm(result).take(6))
+            performViewAction {setSearchHistory(realm.copyFromRealm(result).take(6))}
         }
     }
 
