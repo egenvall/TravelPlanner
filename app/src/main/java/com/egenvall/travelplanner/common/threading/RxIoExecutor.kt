@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RxIoExecutor @Inject constructor() : BackgroundExecutor {
+open class RxIoExecutor @Inject constructor() : BackgroundExecutor {
 
     override val scheduler: Scheduler
         get() = Schedulers.io()

@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 
 @PerScreen
-class SearchPresenter @Inject constructor(private val searchUsecase: SearchUsecase, private val searchTripByStopsUsecase: SearchTripByStopsUsecase) : BasePresenter<SearchPresenter.View>() {
+open class SearchPresenter @Inject constructor(private val searchUsecase: SearchUsecase, private val searchTripByStopsUsecase: SearchTripByStopsUsecase) : BasePresenter<SearchPresenter.View>() {
 
    @Inject lateinit var realm : Realm
     val TAG  = "SearchPresenter"
@@ -31,7 +31,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
     /**
      * Introduce RxBindings when it's available for RxJava2
      */
-    fun searchForLocation(searchTerm : String, wasOrigin : Boolean) {
+    open fun searchForLocation(searchTerm : String, wasOrigin : Boolean) {
         searchUsecase.searchForLocation(searchTerm.trim(),object : DisposableObserver<VtResponseModel>(){
             override fun onNext(response : VtResponseModel){
                 val locationList = response.LocationList
@@ -57,6 +57,12 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
             override fun onError(e: Throwable?)  = view.showMessage(e.toString())
             override fun onComplete() {}
         })
+    }
+
+    override fun onViewAttached() {
+    }
+
+    override fun onViewDetached() {
     }
 
     fun searchForTripByLocations(origin : RealmStopLocation, dest: RealmStopLocation){

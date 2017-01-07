@@ -10,6 +10,13 @@ import javax.inject.Inject
 
 @PerScreen
 class FavouritePresenter @Inject constructor(private val getUsecase: GetFavouritesUsecase) : BasePresenter<FavouritePresenter.View>() {
+    override fun onViewAttached() {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onViewDetached() {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     /**
      * Called when view is detached

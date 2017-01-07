@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AndroidUiExecutor @Inject constructor() : UiExecutor {
+open class AndroidUiExecutor @Inject constructor() : UiExecutor {
 
     override val scheduler: Scheduler
         get() = AndroidSchedulers.mainThread()

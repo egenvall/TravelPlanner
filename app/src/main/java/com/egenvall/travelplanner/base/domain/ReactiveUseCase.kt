@@ -4,8 +4,10 @@ import android.util.Log
 import com.egenvall.travelplanner.common.threading.BackgroundExecutor
 import com.egenvall.travelplanner.common.threading.UiExecutor
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
+import rx.schedulers.Schedulers
 
 abstract class ReactiveUseCase<ObservableType> (
         private val uiExecutor: UiExecutor,
@@ -20,7 +22,7 @@ abstract class ReactiveUseCase<ObservableType> (
                 .subscribeWith(observer))
     }
 
-    protected abstract fun useCaseObservable(): Observable<ObservableType>
+    abstract fun useCaseObservable(): Observable<ObservableType>
 
     fun unsubscribe() {
         disposables.clear();
