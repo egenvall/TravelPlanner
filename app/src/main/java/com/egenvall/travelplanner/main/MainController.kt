@@ -101,18 +101,5 @@ class MainController : RxController(){
 
         navigationTabBar.models = models
         navigationTabBar.setViewPager(viewPager, 2)
-        navigationTabBar.titleMode = NavigationTabBar.TitleMode.ACTIVE
-        navigationTabBar.badgeGravity = NavigationTabBar.BadgeGravity.BOTTOM
-        navigationTabBar.badgePosition = NavigationTabBar.BadgePosition.CENTER
-        navigationTabBar.setTypeface("fonts/custom_font.ttf")
-        navigationTabBar.setIsBadged(true)
-        navigationTabBar.setIsTinted(true)
-        navigationTabBar.setIsBadgeUseTypeface(true)
-        navigationTabBar.badgeBgColor = Color.RED
-        navigationTabBar.badgeTitleColor = Color.WHITE
-        navigationTabBar.setIsSwiped(true)
-        navigationTabBar.badgeSize = 10f
-        navigationTabBar.titleSize = 10f
-        navigationTabBar.iconSizeFraction = 0.5f
     }
 }
