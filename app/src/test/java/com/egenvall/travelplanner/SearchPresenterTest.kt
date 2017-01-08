@@ -23,13 +23,21 @@ import rx.schedulers.Schedulers
 class SearchPresenterTest {
 
 
-    val mockTrip = mock<SearchTripByStopsUsecase>()
-    val mockRepo = mock<Repository>()
     lateinit var searchUsecase : SearchUsecase
-    val mockC = mock<SearchUsecase>()
-
+    lateinit var tripUsecase : SearchTripByStopsUsecase
     lateinit var presenter : SearchPresenter
     val mockView = mock<SearchPresenter.View>()
+    val mockRepo = mock<Repository>()
+
+
+    val successtripResponse = TripResponseModel(
+                TripList(null,null, listOf(Trip(
+                        listOf(Leg(
+                                TripEndpoint(null,null,null,"First","1337","HP",null,null),
+                                TripEndpoint(null,null,null,"Second","1338","HP",null,null),"","","","",""
+                                )),""
+                )))
+        )
 
  @Before
     fun setUp(){
@@ -40,10 +48,11 @@ class SearchPresenterTest {
         })
 
         RxJavaHooks.setOnIOScheduler { scheduler1 -> Schedulers.immediate() }
-
         searchUsecase = SearchUsecase(mockRepo, AndroidUiExecutor(), RxIoExecutor())
-        presenter = SearchPresenter(searchUsecase,mockTrip)
+        tripUsecase = SearchTripByStopsUsecase(mockRepo, AndroidUiExecutor(), RxIoExecutor())
+        presenter = SearchPresenter(searchUsecase,tripUsecase)
         presenter.viewAttached(mockView)
+        presenter.realmActive = false
     }
 
     /**
@@ -70,24 +79,39 @@ class SearchPresenterTest {
         verify(mockRepo,times(1)).getLocationBySearch("Lantmilsgatan")
         verify(mockView,times(1)).showMessage(any())
     }
+
     @Test
-    fun successfulTripResponse(){
-        val tripResponse = TripResponseModel(
-                TripList(null,null, listOf(Trip(
-                        listOf(Leg(
-                                TripEndpoint(null,null,null,"First","1337","HP",null,null),
-                                TripEndpoint(null,null,null,"Second","1338","HP",null,null),"","","","",""
-                                )),""
-                )))
-        )
-       /* whenever(mockRepo.getTripByStops(any(),any())).thenReturn(Observable.just(tripResponse))
-        whenever(mockRepo.getTripsCoordAndCoord(any(), any())).thenReturn(Observable.just(tripResponse))
-        whenever(mockRepo.getTripsCoordAndId(any(),any())).thenReturn(Observable.just(tripResponse))
-        whenever(mockRepo.getTripsIdAndCoord(any(),any())).thenReturn(Observable.just(tripResponse))
+    fun successfulTripByStops(){
+        whenever(mockRepo.getTripByStops(any(),any())).thenReturn(Observable.just(successtripResponse))
         presenter.searchForTripByLocations(StopLocation("1",type = "STOP"), StopLocation("2",type = "STOP"))
-        verify(mockRepo,times(1)).getTripByStops(any(), any())*/
+        verify(mockRepo,times(1)).getTripByStops(any(), any())
+        verify(mockView,times(1)).setTripResults(any())
+    }
 
+    @Test
+    fun successfulTripsCoordAndCoord(){
+        whenever(mockRepo.getTripsCoordAndCoord(any(), any())).thenReturn(Observable.just(successtripResponse))
+        whenever(mockRepo.getTripsCoordAndId(any(),any())).thenReturn(Observable.just(successtripResponse))
+        whenever(mockRepo.getTripsIdAndCoord(any(),any())).thenReturn(Observable.just(successtripResponse))
+        presenter.searchForTripByLocations(StopLocation("1",type = "ADR"), StopLocation("2",type = "ADR"))
+        verify(mockRepo,times(1)).getTripsCoordAndCoord(any(), any())
+        verify(mockView,times(1)).setTripResults(any())
+    }
 
+    @Test
+    fun successfulTripsIdAndCoord(){
+        whenever(mockRepo.getTripsIdAndCoord(any(),any())).thenReturn(Observable.just(successtripResponse))
+        presenter.searchForTripByLocations(StopLocation("1",type = "STOP"), StopLocation("2",type = "ADR"))
+        verify(mockRepo,times(1)).getTripsIdAndCoord(any(), any())
+        verify(mockView,times(1)).setTripResults(any())
+    }
+
+    @Test
+    fun successfulTripsCoordAndId(){
+        whenever(mockRepo.getTripsCoordAndId(any(),any())).thenReturn(Observable.just(successtripResponse))
+        presenter.searchForTripByLocations(StopLocation("1",type = "POI"), StopLocation("2",type = "STOP"))
+        verify(mockRepo,times(1)).getTripsCoordAndId(any(), any())
+        verify(mockView,times(1)).setTripResults(any())
     }
 
     @After
