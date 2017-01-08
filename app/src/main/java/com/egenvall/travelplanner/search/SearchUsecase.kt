@@ -5,19 +5,22 @@ import com.egenvall.travelplanner.common.threading.AndroidUiExecutor
 import com.egenvall.travelplanner.common.threading.RxIoExecutor
 import com.egenvall.travelplanner.model.VtResponseModel
 import com.egenvall.travelplanner.network.Repository
-import io.reactivex.Observable
-import io.reactivex.observers.DisposableObserver
+import rx.Observable
+import rx.Observer
 import javax.inject.Inject
 
 
-class SearchUsecase @Inject constructor(val repository: Repository, uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<VtResponseModel>(uiExec,ioExec) {
+open class SearchUsecase @Inject constructor(val repository: Repository, uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<VtResponseModel>(uiExec,ioExec) {
 
     var searchTerm ="will-be-replaced"
-    fun searchForLocation(searchTerm :String, presenterObserver : DisposableObserver<VtResponseModel>){
+    fun searchForLocation(searchTerm :String, presenterObserver : Observer<VtResponseModel>){
         this.searchTerm = searchTerm
-        super.executeUseCase(presenterObserver)
+        executeUsecase(presenterObserver)
     }
 
+    fun executeUsecase(observer : Observer<VtResponseModel>){
+        super.executeUseCase({observer.onNext(it)},{observer.onError(it)},{observer.onCompleted()})
+    }
 
     override fun useCaseObservable(): Observable<VtResponseModel> {
         return repository.getLocationBySearch(searchTerm)

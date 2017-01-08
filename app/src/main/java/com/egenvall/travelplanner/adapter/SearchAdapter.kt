@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.egenvall.travelplanner.R
+import com.egenvall.travelplanner.extension.getDrawable
 import com.egenvall.travelplanner.model.StopLocation
 import kotlinx.android.synthetic.main.card_stoplocation.view.*
 
@@ -33,6 +34,10 @@ class SearchAdapter(var locationList: List<StopLocation>, val itemClick: (StopLo
                 Log.d("ADAPTER", "Doing : $item")
                 itemView.stoplocation_name.text = item.name
                 itemView.setOnClickListener { itemClick(item) }
+                when(type){
+                    "ADR" -> itemView.holder_stoplocation_img.background = itemView.getDrawable(R.drawable.ic_home_black_36dp)
+                    "STOP" -> itemView.holder_stoplocation_img.background = itemView.getDrawable(R.drawable.ic_tram_black_36dp)
+                }
             }
         }
     }

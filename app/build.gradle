@@ -53,8 +53,9 @@ dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
 
-    compile "io.reactivex.rxjava2:rxjava:$rootProject.rxJavaVersion"
-    compile "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroidVersion"
+    compile "io.reactivex:rxjava:$rootProject.rxJavaVersion"
+    compile "io.reactivex:rxandroid:$rootProject.rxAndroidVersion"
+
 
     compile "com.bluelinelabs:conductor:$rootProject.conductorVersion"
     compile "com.bluelinelabs:conductor-support:$rootProject.conductorVersion"
@@ -81,8 +82,10 @@ dependencies {
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-all:$rootProject.mockitoVersion"
     testCompile "org.hamcrest:hamcrest-all:$rootProject.hamcrestVersion"
-    testCompile "org.powermock:powermock-module-junit4:$rootProject.powerMockito"
-    testCompile "org.powermock:powermock-api-mockito:$rootProject.powerMockito"
+    //testCompile "org.powermock:powermock-module-junit4:$rootProject.powerMockito"
+    //testCompile "org.powermock:powermock-api-mockito:$rootProject.powerMockito"
+        testCompile "com.nhaarman:mockito-kotlin:0.12.1"
+
 
     androidTestCompile "com.android.support.test:runner:$rootProject.runnerVersion"
     androidTestCompile "com.android.support.test:rules:$rootProject.rulesVersion"

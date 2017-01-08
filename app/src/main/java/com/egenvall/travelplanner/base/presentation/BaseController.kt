@@ -25,11 +25,11 @@ abstract class BaseController<View: BaseView, out Presenter : BasePresenter<View
 
     override fun onAttach(view: android.view.View) {
         super.onAttach(view)
-        presenter.onViewAttached(passiveView)
+        presenter.viewAttached(passiveView)
     }
 
     override fun onDetach(view: android.view.View) {
-        presenter.onViewDetached()
+        presenter.viewDetached()
         super.onDetach(view)
     }
 

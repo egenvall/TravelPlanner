@@ -1,28 +1,30 @@
 package com.egenvall.travelplanner.base.domain
 
-import android.util.Log
 import com.egenvall.travelplanner.common.threading.BackgroundExecutor
 import com.egenvall.travelplanner.common.threading.UiExecutor
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableObserver
+import rx.Observable
+import rx.subscriptions.Subscriptions
 
 abstract class ReactiveUseCase<ObservableType> (
         private val uiExecutor: UiExecutor,
         private val backgroundExecutor: BackgroundExecutor) {
 
-    private var disposables = CompositeDisposable()
+    private var subscription = Subscriptions.empty()
 
-    protected fun executeUseCase(observer: DisposableObserver<ObservableType>) {
-        disposables.add(useCaseObservable()
+    protected fun executeUseCase(onNext: (ObservableType) -> Unit = {},
+                                 onError: (Throwable) -> Unit = {},
+                                 onCompleted: () -> Unit = {}) {
+        this.subscription = useCaseObservable()
                 .subscribeOn(backgroundExecutor.scheduler)
                 .observeOn(uiExecutor.scheduler)
-                .subscribeWith(observer))
+                .subscribe(onNext, onError, onCompleted)
     }
 
     protected abstract fun useCaseObservable(): Observable<ObservableType>
 
     fun unsubscribe() {
-        disposables.clear();
+        if (!subscription.isUnsubscribed) {
+            subscription.unsubscribe()
+        }
     }
 }
