@@ -73,7 +73,7 @@ class MainController : RxController(){
 
     private fun initTabBar(){
         val models = mutableListOf<NavigationTabBar.Model>()
-        val colors = resources?.getStringArray(R.array.red_wine)
+        val colors = resources?.getStringArray(R.array.white)
         models.add(
                 NavigationTabBar.Model.Builder(
                         resources?.getDrawable(R.drawable.ic_search_white_24dp),
