@@ -13,8 +13,8 @@ import javax.inject.Inject
 
 
 open class SearchTripByStopsUsecase @Inject constructor(val repository: Repository, uiExec : AndroidUiExecutor, ioExec : RxIoExecutor) : ReactiveUseCase<TripResponseModel>(uiExec,ioExec) {
-    var origin = StopLocation()
-    var dest = StopLocation()
+    private var origin = StopLocation()
+    private var dest = StopLocation()
     val stop = "STOP"
     fun searchTripsByStops(origin : StopLocation, dest : StopLocation, presenterObserver : Observer<TripResponseModel>){
         this.origin = origin

@@ -6,6 +6,9 @@
     <string name="settings">Settings</string>
     <string name="clientcredentials">client_credentials</string>
 
+    <!-- Favourite Screen Strings -->
+    <string name="no_favs_found">No favourites here yet</string>
+
 
 
     <!-- SEARCH SCREEN STRINGS -->

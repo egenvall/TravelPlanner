@@ -10,3 +10,5 @@ open class RealmStopLocation(@PrimaryKey open var stopid : String = "stopidY", o
                              open var lon : Double = 0.0, open var idx : String = "idx",
                              open var name : String = "Stopname") : RealmObject()
 open class SearchPair(@PrimaryKey open var orgPlusDestId : String = "orgid/destid", open var origin : RealmStopLocation = RealmStopLocation(), open var destination : RealmStopLocation = RealmStopLocation()) : RealmObject()
+open class Favourite(@PrimaryKey open var nickName : String = "Nick", open var hexColor : String ="#1976D2", open var pair : SearchPair = SearchPair()) : RealmObject()
+open class Favourites(@PrimaryKey open var key: String = "key", open var list : RealmList<Favourite> = RealmList()) : RealmObject()

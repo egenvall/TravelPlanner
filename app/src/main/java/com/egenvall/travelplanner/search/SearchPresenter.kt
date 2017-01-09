@@ -168,11 +168,16 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
 
     fun getSearchHistory() {
         if(realmActive) {
-            realm.executeTransaction {
                 //val res = realm.where(SearchHistory::class.java).findFirst().list.deleteAllFromRealm()
-                val result = realm.where(SearchHistory::class.java).findFirst().list.distinct()
-                performViewAction { setSearchHistory(realm.copyFromRealm(result).take(6)) }
+            val res = realm.where(SearchHistory::class.java).findFirst()
+            if (res == null){
+                realm.beginTransaction()
+                realm.createObject(SearchHistory::class.java, "History")
+                realm.commitTransaction()
             }
+            val result = realm.where(SearchHistory::class.java).findFirst().list.distinct()
+            performViewAction { setSearchHistory(realm.copyFromRealm(result).take(6)) }
+
         }
     }
 
