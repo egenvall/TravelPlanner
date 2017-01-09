@@ -4,37 +4,24 @@ import com.egenvall.travelplanner.base.presentation.BasePresenter
 import com.egenvall.travelplanner.base.presentation.BaseView
 import com.egenvall.travelplanner.common.injection.scope.PerScreen
 import com.egenvall.travelplanner.model.*
+import com.egenvall.travelplanner.persistance.IRealmInteractor
 import io.realm.Realm
 import rx.Observer
 import javax.inject.Inject
 
 
 @PerScreen
-class SearchPresenter @Inject constructor(private val searchUsecase: SearchUsecase, private val searchTripByStopsUsecase: SearchTripByStopsUsecase) : BasePresenter<SearchPresenter.View>() {
+class SearchPresenter @Inject constructor(private val searchUsecase: SearchUsecase, private val searchTripByStopsUsecase: SearchTripByStopsUsecase, private val realmInteractor : IRealmInteractor) : BasePresenter<SearchPresenter.View>() {
 
-    @Inject lateinit var realm: Realm
-    val TAG = "SearchPresenter"
-
-    //This is ugly. Can't mock realm in an easy way for Unit Tests.
-    //Prevents realm from being called in tests.
-    //TODO: Find a better way
-    var realmActive = true
-    /**
-     * Called when view is detached
-     */
-    override fun unsubscribe() {
-        searchUsecase.unsubscribe()
-        searchTripByStopsUsecase.unsubscribe()
+//===================================================================================
+// Search related methods
+//===================================================================================
+    private fun mapToStopLocation(stop: RealmStopLocation): StopLocation {
+        with(stop) {
+            return StopLocation(stopid, type, lat, lon, idx, name)
+        }
     }
 
-
-//===================================================================================
-// Usecase Methods
-//===================================================================================
-
-    /**
-     * Introduce RxBindings when it's available for RxJava2
-     */
     fun searchForLocation(searchTerm: String, wasOrigin: Boolean) {
         searchUsecase.searchForLocation(searchTerm.trim(), object : Observer<VtResponseModel> {
             override fun onNext(response: VtResponseModel) {
@@ -66,17 +53,9 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         })
     }
 
-
-    override fun onViewAttached() {
+    fun searchForTripByLocations(origin : RealmStopLocation, dest : RealmStopLocation){
+        searchForTripByLocations(mapToStopLocation(origin),mapToStopLocation(dest))
     }
-
-    override fun onViewDetached() {
-    }
-
-    fun searchForTripByLocations(origin: RealmStopLocation, dest: RealmStopLocation) {
-        searchForTripByLocations(mapToStopLocation(origin), mapToStopLocation(dest))
-    }
-
     fun searchForTripByLocations(origin: StopLocation, dest: StopLocation) {
         addToSearchHistory(origin, dest)
         searchTripByStopsUsecase.searchTripsByStops(origin, dest, object : Observer<TripResponseModel> {
@@ -92,94 +71,13 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         })
     }
 
+    private fun addToSearchHistory(origin: StopLocation, dest: StopLocation)
+            = realmInteractor.addSearchHistory(origin,dest)
 
-//===================================================================================
-// Realm Methods
-//===================================================================================
+    fun removeFromSearchHistory(pair: SearchPair) = realmInteractor.removeFromSearchHistory(pair)
 
-    fun addToSearchHistory(origin: StopLocation, dest: StopLocation) {
-        if (realmActive) {
-            val history = realm.where(SearchHistory::class.java).findFirst()
-            if (history == null) {
-                realm.beginTransaction()
-                realm.createObject(SearchHistory::class.java, "History")
-                realm.commitTransaction()
-                addPairToRealm(origin, dest)
-            } else {
-                addPairToRealm(origin, dest)
-            }
-        }
-    }
+    fun getSearchHistory() = performViewAction { setSearchHistory(realmInteractor.getSearchHistory()) }
 
-    fun constructPkSearchPair(origin: StopLocation, dest: StopLocation): String {
-        var originIdentifier: String = ""
-        var destIdentifier: String = ""
-        when (origin.type) {
-            "STOP" -> originIdentifier = origin.id
-            "ADR" -> originIdentifier = origin.name
-            "POI" -> originIdentifier = origin.name
-        }
-        when (dest.type) {
-            "STOP" -> destIdentifier = dest.id
-            "ADR" -> destIdentifier = dest.name
-            "POI" -> destIdentifier = dest.name
-        }
-        return originIdentifier + "/" + destIdentifier
-    }
-
-    fun addPairToRealm(origin: StopLocation, dest: StopLocation) {
-        val history = realm.where(SearchHistory::class.java).findFirst()
-        val copy = realm.copyFromRealm(history.list)
-
-        copy.add(0, SearchPair(constructPkSearchPair(origin, dest),
-                mapToRealmStopLocation(origin),
-                mapToRealmStopLocation(dest))
-        )
-
-        realm.executeTransaction {
-            with(history.list) {
-                deleteAllFromRealm()
-                realm.copyToRealmOrUpdate(copy.take(6))
-                addAll(copy.distinctBy { it.orgPlusDestId })
-            }
-        }
-    }
-
-    private fun mapToStopLocation(stop: RealmStopLocation): StopLocation {
-        with(stop) {
-            return StopLocation(stopid, type, lat, lon, idx, name)
-        }
-    }
-
-    private fun mapToRealmStopLocation(stop: StopLocation): RealmStopLocation {
-        with(stop) {
-            return RealmStopLocation(id, type, lat, lon, idx, name)
-        }
-    }
-
-    fun removeFromSearchHistory(pair: SearchPair) {
-        realm.executeTransaction {
-            val result = realm.where(SearchPair::class.java)
-                    .equalTo("orgPlusDestId", pair.orgPlusDestId).findFirst()
-            result.deleteFromRealm()
-        }
-    }
-
-
-    fun getSearchHistory() {
-        if(realmActive) {
-                //val res = realm.where(SearchHistory::class.java).findFirst().list.deleteAllFromRealm()
-            val res = realm.where(SearchHistory::class.java).findFirst()
-            if (res == null){
-                realm.beginTransaction()
-                realm.createObject(SearchHistory::class.java, "History")
-                realm.commitTransaction()
-            }
-            val result = realm.where(SearchHistory::class.java).findFirst().list.distinct()
-            performViewAction { setSearchHistory(realm.copyFromRealm(result).take(6)) }
-
-        }
-    }
 
 //===================================================================================
 // View Interface
@@ -190,5 +88,16 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         fun setSearchResults(list: List<StopLocation>, wasOrigin: Boolean)
         fun setTripResults(list: List<Trip>)
         fun setSearchHistory(list: List<SearchPair>)
+    }
+
+
+//===================================================================================
+//  Lifecycle Methods
+//===================================================================================
+    override fun onViewAttached() {}
+    override fun onViewDetached() {}
+    override fun unsubscribe() {
+        searchUsecase.unsubscribe()
+        searchTripByStopsUsecase.unsubscribe()
     }
 }

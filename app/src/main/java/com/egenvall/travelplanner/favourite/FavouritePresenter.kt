@@ -3,31 +3,22 @@ package com.egenvall.travelplanner.favourite
 import com.egenvall.travelplanner.base.presentation.BasePresenter
 import com.egenvall.travelplanner.base.presentation.BaseView
 import com.egenvall.travelplanner.common.injection.scope.PerScreen
-import com.egenvall.travelplanner.model.*
+import com.egenvall.travelplanner.model.Favourite
+import com.egenvall.travelplanner.model.RealmStopLocation
+import com.egenvall.travelplanner.model.StopLocation
+import com.egenvall.travelplanner.model.TripResponseModel
+import com.egenvall.travelplanner.persistance.IRealmInteractor
 import com.egenvall.travelplanner.search.SearchTripByStopsUsecase
-import io.realm.Realm
 import rx.Observer
 import javax.inject.Inject
 
 
-
 @PerScreen
-class FavouritePresenter @Inject constructor(val searchTripUc : SearchTripByStopsUsecase) : BasePresenter<FavouritePresenter.View>() {
-    @Inject lateinit var realm: Realm
+class FavouritePresenter @Inject constructor(val searchTripUc : SearchTripByStopsUsecase, private val realmInteractor : IRealmInteractor) : BasePresenter<FavouritePresenter.View>() {
 
-    override fun onViewAttached() {
-    }
-
-    override fun onViewDetached() {
-    }
-
-    /**
-     * Called when view is detached
-     */
-    override fun unsubscribe() {
-        searchTripUc.unsubscribe()
-    }
-
+//===================================================================================
+// Favourites related methods
+//===================================================================================
     fun searchFavouriteTrip(fav : Favourite){
         searchTripUc.searchTripsByStops(
                 mapToStopLocation(fav.pair.origin),mapToStopLocation(fav.pair.destination),
@@ -52,71 +43,30 @@ class FavouritePresenter @Inject constructor(val searchTripUc : SearchTripByStop
         }
     }
 
+//===================================================================================
+//  Persistance related methods
+//===================================================================================
     fun addFavourite(origin : StopLocation, dest : StopLocation, nick: String, bg : String){
-        val favList = realm.where(Favourites::class.java).findFirst()
-            if (favList == null) {
-                realm.beginTransaction()
-                realm.createObject(Favourites::class.java, "Favourites")
-                realm.commitTransaction()
-                addFavouriteToRealm(origin,dest,nick,bg)
-            } else {
-                addFavouriteToRealm(origin,dest,nick,bg)
-            }
+        realmInteractor.addFavourite(origin,dest,nick,bg)
     }
 
-    private fun addFavouriteToRealm(origin : StopLocation, dest : StopLocation, nick: String, bg : String){
-        val favourites = realm.where(Favourites::class.java).findFirst()
-        val copy = realm.copyFromRealm(favourites.list)
+    fun getFavourites() = performViewAction {setFavourites(realmInteractor.getFavourites())}
 
-        copy.add(0, Favourite(nick,bg,SearchPair(constructPkSearchPair(origin,dest),
-                mapToRealmStopLocation(origin),
-                mapToRealmStopLocation(dest)))
-        )
+//===================================================================================
+//  Lifecycle Methods
+//===================================================================================
+    override fun onViewAttached() {}
 
-        realm.executeTransaction {
-            with(favourites.list) {
-                deleteAllFromRealm()
-                realm.copyToRealmOrUpdate(copy)
-                addAll(copy.distinctBy { it.pair.orgPlusDestId })
-            }
-        }
-    }
-    private fun mapToRealmStopLocation(stop: StopLocation): RealmStopLocation {
-        with(stop) {
-            return RealmStopLocation(id, type, lat, lon, idx, name)
-        }
+    override fun onViewDetached() {}
+
+    //Called from BasePresenter when view is detached
+    override fun unsubscribe() {
+        searchTripUc.unsubscribe()
     }
 
-        fun constructPkSearchPair(origin: StopLocation, dest: StopLocation): String {
-        var originIdentifier: String = ""
-        var destIdentifier: String = ""
-        when (origin.type) {
-            "STOP" -> originIdentifier = origin.id
-            "ADR" -> originIdentifier = origin.name
-            "POI" -> originIdentifier = origin.name
-        }
-        when (dest.type) {
-            "STOP" -> destIdentifier = dest.id
-            "ADR" -> destIdentifier = dest.name
-            "POI" -> destIdentifier = dest.name
-        }
-        return originIdentifier + "/" + destIdentifier
-    }
-
-
-    fun getFavourites() {
-        realm.executeTransaction {
-            val res = realm.where(Favourites::class.java).findFirst()
-            if (res != null) {
-                performViewAction { setFavourites(realm.copyFromRealm(res.list.distinct())) }
-            } else {
-                performViewAction { setFavourites(listOf<Favourite>()) }
-            }
-        }
-    }
-    /**
-     * Interface for Controllers to implement
-     */
+//===================================================================================
+// View Interface
+//===================================================================================
     interface View : BaseView {
         fun showMessage(str : String)
         fun setFavourites(list : List<Favourite>)
