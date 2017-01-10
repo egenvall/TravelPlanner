@@ -34,7 +34,7 @@ Customizable favourites, Search History, Location based search, Tourist mode, Di
 
 ##Technologies used:
 - Kotlin
-- RxJava 1 & 2
+- RxJava
 - Realm
 - Dagger2
 - Mockito
