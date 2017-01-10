@@ -27,8 +27,8 @@ Customizable favourites, Search History, Location based search, Tourist mode, Di
 
 ##Current State:
 
-![First](https://cloud.githubusercontent.com/assets/3669105/21563881/dbba7f02-ce86-11e6-8960-eabcef68442b.gif)
-![Second](https://cloud.githubusercontent.com/assets/3669105/21563880/dbb9da70-ce86-11e6-8f6f-7ca9c7192aa7.gif)
+![First](https://cloud.githubusercontent.com/assets/3669105/21808563/239f3b4e-d744-11e6-812f-1942aa7439cf.gif)
+![Second](https://cloud.githubusercontent.com/assets/3669105/21808564/23b5f794-d744-11e6-875d-920ba92bca90.gif)
 
 
 
