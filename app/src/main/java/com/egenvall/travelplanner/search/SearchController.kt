@@ -182,7 +182,6 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         }
     }
 
-
     fun clickedDest(item: StopLocation){
         editDestSubscription.unsubscribe()
         destText.setText(item.name)

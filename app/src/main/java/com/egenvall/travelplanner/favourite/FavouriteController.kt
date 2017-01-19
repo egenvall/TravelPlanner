@@ -19,6 +19,7 @@ import com.egenvall.travelplanner.extension.show
 import com.egenvall.travelplanner.extension.showSnackbar
 import com.egenvall.travelplanner.model.Favourite
 import kotlinx.android.synthetic.main.screen_favourites.view.*
+import java.math.BigInteger
 import javax.inject.Inject
 
 
@@ -43,7 +44,9 @@ class FavouriteController : BaseController<FavouritePresenter.View, FavouritePre
         favouriteRecycler.layoutManager = StaggeredGridLayoutManager(2,
                 StaggeredGridLayoutManager.VERTICAL)
         favouriteRecycler.adapter = favouriteAdapter
+
     }
+    
 
     override fun onAttach(view: View) {
         super.onAttach(view)
