@@ -4,7 +4,6 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/controller_container"
         android:layout_width="match_parent"
-            android:background="#423752"
 
         android:layout_height="match_parent">
     </com.bluelinelabs.conductor.ChangeHandlerFrameLayout>

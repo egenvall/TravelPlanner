@@ -22,7 +22,7 @@ import devlight.io.library.ntb.NavigationTabBar
 class MainController : RxController(){
     private val pagerAdapter : ControllerPagerAdapter
     private lateinit var viewPager : ViewPager
-    private lateinit var navigationTabBar :  NavigationTabBar
+    private lateinit var navigationTabBar : NavigationTabBar
     @LayoutRes val layoutResId: Int = R.layout.screen_main
     private val TAG = "MainController"
 
@@ -57,7 +57,7 @@ class MainController : RxController(){
         return view
     }
 
-     fun onViewBound(view: View) {
+    fun onViewBound(view: View) {
         navigationTabBar = view.findViewById(R.id.ntb) as NavigationTabBar
         viewPager = view.findViewById(R.id.view_pager) as ViewPager
         viewPager.adapter = pagerAdapter

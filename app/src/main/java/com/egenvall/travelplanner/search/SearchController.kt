@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.bluelinelabs.conductor.RouterTransaction
+import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.egenvall.travelplanner.R
 import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.adapter.SearchAdapter
@@ -34,7 +36,11 @@ import java.util.*
 
 
 class SearchController : BaseController<SearchPresenter.View, SearchPresenter>(),
-        SearchPresenter.View {
+        SearchPresenter.View, SearchModuleController.TargetTitleListener {
+    override fun onSelectedStop(stop: StopLocation) {
+        Log.d(TAG,"RECEIVED ${stop.name}")
+    }
+
     private lateinit var searchViewComponent: SearchViewComponent
     override val passiveView: SearchPresenter.View = this
     @Inject override lateinit var presenter: SearchPresenter
@@ -120,6 +126,10 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
          */
         startOriginSubscription()
         startDestinationSubscription()
+        originText.setOnClickListener {
+            router.pushController(RouterTransaction.with(SearchModuleController(this))
+                    .pushChangeHandler(HorizontalChangeHandler())
+                    .popChangeHandler(HorizontalChangeHandler())) }
     }
 
     fun getEditTextSub(edit : EditText, origin : Boolean) : Subscription{

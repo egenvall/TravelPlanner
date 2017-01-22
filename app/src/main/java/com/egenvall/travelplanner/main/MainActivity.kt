@@ -11,6 +11,7 @@ import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.R
 
 import com.egenvall.travelplanner.common.injection.module.ActivityModule
+import com.egenvall.travelplanner.search.SearchModuleController
 import kotlinx.android.synthetic.main.activity_main.*
 
 
