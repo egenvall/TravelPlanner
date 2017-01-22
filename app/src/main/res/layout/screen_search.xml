@@ -233,8 +233,7 @@
         />
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="336dp"
-        android:maxHeight="336dp"
+        android:layout_height="360dp"
         android:id="@+id/history_recycler"
         android:background="@color/material_primary_light"
         app:layout_constraintTop_toBottomOf="@id/search_history_text"

@@ -4,6 +4,7 @@ import com.egenvall.travelplanner.common.threading.AndroidUiExecutor
 import com.egenvall.travelplanner.common.threading.RxIoExecutor
 import com.egenvall.travelplanner.model.*
 import com.egenvall.travelplanner.network.Repository
+import com.egenvall.travelplanner.persistance.IRealmInteractor
 import com.egenvall.travelplanner.search.SearchPresenter
 import com.egenvall.travelplanner.search.SearchTripByStopsUsecase
 import com.egenvall.travelplanner.search.SearchUsecase
@@ -26,6 +27,7 @@ class SearchPresenterTest {
     lateinit var searchUsecase : SearchUsecase
     lateinit var tripUsecase : SearchTripByStopsUsecase
     lateinit var presenter : SearchPresenter
+    val mockRealm = mock<IRealmInteractor>()
     val mockView = mock<SearchPresenter.View>()
     val mockRepo = mock<Repository>()
 
@@ -50,9 +52,8 @@ class SearchPresenterTest {
         RxJavaHooks.setOnIOScheduler { scheduler1 -> Schedulers.immediate() }
         searchUsecase = SearchUsecase(mockRepo, AndroidUiExecutor(), RxIoExecutor())
         tripUsecase = SearchTripByStopsUsecase(mockRepo, AndroidUiExecutor(), RxIoExecutor())
-        presenter = SearchPresenter(searchUsecase,tripUsecase)
+        presenter = SearchPresenter(searchUsecase,tripUsecase,mockRealm)
         presenter.viewAttached(mockView)
-        presenter.realmActive = false
     }
 
     /**

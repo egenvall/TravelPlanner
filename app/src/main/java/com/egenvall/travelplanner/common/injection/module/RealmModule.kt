@@ -2,6 +2,8 @@ package com.egenvall.travelplanner.common.injection.module
 
 
 import com.egenvall.travelplanner.TravelPlanner
+import com.egenvall.travelplanner.persistance.IRealmInteractor
+import com.egenvall.travelplanner.persistance.RealmInteractorImpl
 import dagger.Module
 import dagger.Provides
 import io.realm.Realm
@@ -24,5 +26,10 @@ class RealmModule(val app : TravelPlanner) {
     internal fun provideRealm(realmConfiguration: RealmConfiguration) : Realm
     {
         return Realm.getInstance(realmConfiguration)
+    }
+    @Singleton
+    @Provides
+    internal fun provideInteractor(realm : Realm) : IRealmInteractor{
+        return RealmInteractorImpl(realm)
     }
 }

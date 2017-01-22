@@ -1,0 +1,36 @@
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="200dp">
+
+    <RelativeLayout
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:layout_weight="0.5">
+
+        <View
+            android:background="@color/cardview_dark_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fav_bg"/>
+
+        <TextView
+            android:id="@+id/fav_nick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="20sp"
+            tools:text="Nickname"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/material_text_icons"/>
+
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

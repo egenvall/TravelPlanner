@@ -1,41 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
->
+    android:layout_height="match_parent">
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="65dp"
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
         />
     <devlight.io.library.ntb.NavigationTabBar
-    android:layout_gravity="bottom"
     android:id="@+id/ntb"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
-    app:ntb_animation_duration="400"
-    app:ntb_preview_colors="@array/red_wine"
-    app:ntb_active_color="#fff"
-    app:ntb_inactive_color="#000"
-    app:ntb_badged="true"
+    android:layout_height="50dp"
+    app:ntb_animation_duration="250"
+    app:ntb_active_color="@color/ntb_active"
+    app:ntb_inactive_color="@color/ntb_inactive"
     app:ntb_scaled="true"
     app:ntb_tinted="true"
-    app:ntb_title_mode="all"
-    app:ntb_badge_position="right"
-    app:ntb_badge_gravity="top"
-    app:ntb_badge_bg_color="#ffff0000"
-    app:ntb_badge_title_color="#ffffffff"
-    app:ntb_typeface="fonts/custom_typeface.ttf"
-    app:ntb_badge_use_typeface="true"
     app:ntb_swiped="true"
     app:ntb_icon_size_fraction="0.5"
-    app:ntb_badge_size="10sp"
-    app:ntb_title_size="10sp"
+    app:ntb_badge_size="10dp"
+    app:ntb_bg_color="@color/ntb_bg"
     android:background="@color/cardview_light_background"/>
 
-</FrameLayout>
+</LinearLayout>

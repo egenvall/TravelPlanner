@@ -21,5 +21,10 @@
     <color name="material_text_secondary">#757575</color>
     <color name="material_text_icons">#FFFFFF</color>
     <color name="material_divider">#BDBDBD</color>
+    <color name="ntb_active">#8DC8B3</color>
+    <color name="ntb_bg">#FAFAFA</color>
+    <color name="ntb_inactive">#616161</color>
+    
+
 
 </resources>

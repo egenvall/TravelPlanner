@@ -8,9 +8,19 @@
         <item>#ffbf013b</item>
     </string-array>
 
+    <string-array name="material_blue">
+        <item>#FF9C0C</item>
+        <item>#FFAF3B</item>
+        <item>#FFC269</item>
+    </string-array>
+
+    <string-array name="white">
+        <item>#FAFAFA</item>
+        <item>#FAFAFA</item>
+        <item>#FAFAFA</item>
+    </string-array>
+
     <string-array name="polluted_waves">
-        <item>#394948</item>
-        <item>#5a7874</item>
         <item>#499092</item>
         <item>#43abae</item>
         <item>#6ecfd2</item>

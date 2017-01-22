@@ -6,6 +6,7 @@ import com.egenvall.travelplanner.common.injection.module.AppModule
 import com.egenvall.travelplanner.common.injection.module.RealmModule
 import com.egenvall.travelplanner.common.injection.module.VtModule
 import com.egenvall.travelplanner.network.Repository
+import com.egenvall.travelplanner.persistance.IRealmInteractor
 import dagger.Component
 import io.realm.Realm
 import javax.inject.Singleton
@@ -20,5 +21,5 @@ interface AppComponent {
     fun context(): Context
     fun sharedPreferences(): SharedPreferences
     fun repository() : Repository
-    fun realm() : Realm
+    fun realm() : IRealmInteractor
 }
