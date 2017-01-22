@@ -1,19 +1,17 @@
 package com.egenvall.travelplanner.search
 
-import android.content.Context
 import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
+import android.widget.TextView
+import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler
 import com.egenvall.travelplanner.R
 import com.egenvall.travelplanner.TravelPlanner
-import com.egenvall.travelplanner.adapter.SearchAdapter
 import com.egenvall.travelplanner.adapter.SearchHistoryAdapter
 import com.egenvall.travelplanner.base.presentation.BaseController
 import com.egenvall.travelplanner.common.injection.component.DaggerSearchViewComponent
@@ -23,48 +21,46 @@ import com.egenvall.travelplanner.extension.*
 import com.egenvall.travelplanner.model.SearchPair
 import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.Trip
-import com.jakewharton.rxbinding.widget.RxTextView
-import kotlinx.android.synthetic.main.screen_search.view.*
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.subscriptions.Subscriptions
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
+import kotlinx.android.synthetic.main.screen_search.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-
+/**
+ * Base UI representation of the search functionality.
+ * Shows search history and TextViews with the currently specified origin and destination for a
+ * trip to be searched
+ */
 class SearchController : BaseController<SearchPresenter.View, SearchPresenter>(),
         SearchPresenter.View, SearchModuleController.TargetTitleListener {
-    override fun onSelectedStop(stop: StopLocation) {
-        Log.d(TAG,"RECEIVED ${stop.name}")
+    override fun onSelectedStop(stop: StopLocation, origin: Boolean) {
+        if (origin) {
+            Log.d(TAG, "Origin received: $stop")
+            clickedOrigin(stop)
+        }
+        else {
+            Log.d(TAG, "Destination received: $stop")
+            clickedDest(stop)
+        }
     }
-
     private lateinit var searchViewComponent: SearchViewComponent
     override val passiveView: SearchPresenter.View = this
     @Inject override lateinit var presenter: SearchPresenter
     @LayoutRes override val layoutResId: Int = R.layout.screen_search
-    lateinit private var mRecyclerOrigin : RecyclerView
-    lateinit private var mRecyclerDestination : RecyclerView
     lateinit private var mRecyclerHistory : RecyclerView
-    lateinit private var mOriginAdapter : SearchAdapter
-    lateinit private var mDestAdapter : SearchAdapter
     lateinit private var mHistoryAdapter : SearchHistoryAdapter
     private var mOrigin : StopLocation? = null
     private var mDestination : StopLocation? = null
-    private var editOrgSubscription = Subscriptions.unsubscribed()
-    private var editDestSubscription = Subscriptions.unsubscribed()
+    lateinit var originText : TextView
+    lateinit var destText : TextView
+    val TAG = "Chilrtoot"
 
-
-    lateinit var originText : EditText
-    lateinit var destText : EditText
-    val TAG = "SearchController"
-
-//===================================================================================
+    //===================================================================================
 //     Lifecycle methods and initialization
 //===================================================================================
     override fun onViewBound(view: View) {
+        retainViewMode = RetainViewMode.RETAIN_DETACH
         initInjection()
         view.search_expand_btn.setOnClickListener {toggleExpandableView(view)}
         view.search_swap_btn.setOnClickListener { swapOriginDestination() }
@@ -72,102 +68,50 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         destText = view.desination_edt
 
         /**
-         * Origin Recycler
+         * Search History
          */
-        mRecyclerOrigin = view.origin_recycler
-        mOriginAdapter = SearchAdapter(mutableListOf<StopLocation>()){ clickedOrigin(it) }
-        mRecyclerOrigin.setHasFixedSize(false)
-        mRecyclerOrigin.layoutManager = LinearLayoutManager(applicationContext)
-        mRecyclerOrigin.adapter = mOriginAdapter
 
-        /**
-         * Destination recycler
-         */
-        mRecyclerDestination = view.destination_recycler
-        mRecyclerDestination.setHasFixedSize(false)
-        mRecyclerDestination.layoutManager = LinearLayoutManager(applicationContext)
-        mDestAdapter = SearchAdapter(mutableListOf<StopLocation>()){ clickedDest(it) }
-        mRecyclerDestination.adapter = mDestAdapter
+        mRecyclerHistory = view.history_recycler
+        mRecyclerHistory.setHasFixedSize(true)
+        mRecyclerHistory.layoutManager = LinearLayoutManager(applicationContext)
+        mHistoryAdapter = SearchHistoryAdapter(mutableListOf<SearchPair>()){clickedHistoryPair(it)}
+        mRecyclerHistory.adapter = mHistoryAdapter
 
-    /**
-     * Search History
-     */
-
-    mRecyclerHistory = view.history_recycler
-    mRecyclerHistory.setHasFixedSize(true)
-    mRecyclerHistory.layoutManager = LinearLayoutManager(applicationContext)
-    mHistoryAdapter = SearchHistoryAdapter(mutableListOf<SearchPair>()){clickedHistoryPair(it)}
-    mRecyclerHistory.adapter = mHistoryAdapter
-
-
-
-    view.search_button.setOnClickListener {
+        view.search_button.setOnClickListener {
             presenter.searchForTripByLocations(mOrigin!!,mDestination!!)
         }
 
-    val format = SimpleDateFormat("EEE ddMMM HH:mm",Locale.getDefault())
+        val format = SimpleDateFormat("EEE ddMMM HH:mm", Locale.getDefault())
 
-    view.datetime_button.text = format.format(Date())
+        view.datetime_button.text = format.format(Date())
 
-    view.datetime_button.setOnClickListener {
-        SingleDateAndTimePickerDialog.Builder(activity)
-                .bottomSheet()
-                .title("Simple")
-                .listener(object : SingleDateAndTimePickerDialog.Listener {
-                    override fun onDateSelected(date: Date) {
-                        Log.d(TAG,"Chose Date: ${date.toString()}")
-                        view.datetime_button.text = format.format(date)
-                    }
-                }).display()
+        view.datetime_button.setOnClickListener {
+            SingleDateAndTimePickerDialog.Builder(activity)
+                    .bottomSheet()
+                    .title("Simple")
+                    .listener(object : SingleDateAndTimePickerDialog.Listener {
+                        override fun onDateSelected(date: Date) {
+                            Log.d(TAG,"Chose Date: ${date.toString()}")
+                            view.datetime_button.text = format.format(date)
+                        }
+                    }).display()
+        }
+
+
+        originText.setOnClickListener { openSearchScreen(true)}
+        destText.setOnClickListener { openSearchScreen(false) }
     }
 
-        /**
-         * Start subscription for edittexts
-         */
-        startOriginSubscription()
-        startDestinationSubscription()
-        originText.setOnClickListener {
-            router.pushController(RouterTransaction.with(SearchModuleController(this))
-                    .pushChangeHandler(HorizontalChangeHandler())
-                    .popChangeHandler(HorizontalChangeHandler())) }
+    fun openSearchScreen(origin: Boolean){
+        router.pushController(RouterTransaction.with(SearchModuleController(this,origin))
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler()))
     }
 
-    fun getEditTextSub(edit : EditText, origin : Boolean) : Subscription{
-        edit.setSelectAllOnFocus(true)
-        return RxTextView.textChanges(edit)
-                .skip(1)
-                .map { s -> s.toString()}
-                .throttleLast(200,TimeUnit.MILLISECONDS) //Emit only the last item in 200ms interval
-                .debounce (750, TimeUnit.MILLISECONDS)   //Emit the last item if 750ms has passed with no more emits
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ finalText ->
-                    hideSearchButton()
-                    if (finalText.length >=3){
-                        searchForLocation(finalText,origin)
-                    }
-                })
-    }
 
     override fun onAttach(view: View) {
         super.onAttach(view)
         presenter.getSearchHistory()
-    }
-
-    fun startOriginSubscription(){
-        editOrgSubscription = getEditTextSub(originText,true)
-    }
-    fun startDestinationSubscription() {
-        editDestSubscription = getEditTextSub(destText,false)
-    }
-
-
-//===================================================================================
-// Presenter Methods
-//===================================================================================
-    fun searchForLocation(searchTerm : String, originRequested : Boolean){
-        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
-        presenter.searchForLocation(searchTerm,originRequested)
     }
 
 //===================================================================================
@@ -193,25 +137,19 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     }
 
     fun clickedDest(item: StopLocation){
-        editDestSubscription.unsubscribe()
         destText.setText(item.name)
-        view?.expandable_layout_destination_search?.collapse(true)
         mDestination = item
         checkOriginAndDest()
-        startDestinationSubscription()
     }
 
 
     fun clickedOrigin(item : StopLocation){
-        editOrgSubscription.unsubscribe()
-        originText.setText(item.name)
-        view?.expandable_layout_origin_search?.collapse(true)
+        originText.text = item.name
         mOrigin = item
         checkOriginAndDest()
-        startOriginSubscription()
     }
 
-    fun toggleExpandableView(view:View){
+    fun toggleExpandableView(view: View){
         with(view.expandable_layout){
             if (isExpanded){
                 collapse(true)
@@ -234,15 +172,11 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     }
 
     fun swapOriginDestination(){
-        editOrgSubscription.unsubscribe()
-        editDestSubscription.unsubscribe()
         val tmpSwap = mOrigin
         mOrigin = mDestination
         mDestination = tmpSwap
         originText.setText(mOrigin?.name)
         destText.setText(mDestination?.name)
-        startOriginSubscription()
-        startDestinationSubscription()
     }
 //===================================================================================
 // Dependency injection
@@ -265,28 +199,6 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         view?.showSnackbar(str)
     }
 
-    override fun setSearchResults(list: List<StopLocation>, wasOrigin : Boolean) {
-        if (list.isEmpty()) {
-            view?.showSnackbar("No results found")
-            return
-        }
-        if (wasOrigin) {
-            view?.expandable_layout_origin_search?.expand()
-            with(mOriginAdapter){
-                locationList = list
-                notifyDataSetChanged()
-            }
-        }
-        else {
-            view?.expandable_layout_destination_search?.expand()
-            with(mDestAdapter){
-                locationList = list
-                notifyDataSetChanged()
-            }
-        }
-
-    }
-
     override fun setTripResults(list: List<Trip>) {
         for (t in list){
             Log.d(TAG,"-------Trip  Byten: ${t.Leg.filter { it.type != "WALK" }.size-1}----------")
@@ -294,17 +206,12 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
                 Log.d(TAG, ": [${l.Origin.name} - ${l.Destination.name} : ${l.Origin.time} - ${l.Destination.time}")
 
             }
-            Log.d(TAG,"--------------------")
+            Log.d(TAG,"---------B-----------")
 
         }
     }
 
     override fun setSearchHistory(list: List<SearchPair>) {
-        for(p in list){
-            Log.d(TAG,"${p.orgPlusDestId}")
-        }
-        Log.d(TAG,"-----------")
-
         mHistoryAdapter.historyList = list
         mHistoryAdapter.notifyDataSetChanged()
     }

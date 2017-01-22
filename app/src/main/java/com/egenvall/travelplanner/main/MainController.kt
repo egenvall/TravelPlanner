@@ -11,7 +11,7 @@ import com.bluelinelabs.conductor.rxlifecycle.RxController
 import com.bluelinelabs.conductor.support.ControllerPagerAdapter
 import com.egenvall.travelplanner.R
 import com.egenvall.travelplanner.favourite.FavouriteController
-import com.egenvall.travelplanner.search.SearchController
+import com.egenvall.travelplanner.search.SearchRouterController
 import devlight.io.library.ntb.NavigationTabBar
 
 /**
@@ -31,7 +31,7 @@ class MainController : RxController(){
         pagerAdapter = object : ControllerPagerAdapter(this, false) {
             override fun getItem(position: Int): Controller {
                 when(position){
-                    0 -> return SearchController()
+                    0 -> return SearchRouterController()
                     1 -> return FavouriteController()
                 }
                 return FavouriteController()

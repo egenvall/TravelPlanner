@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    android:background="@color/material_accent"
+    android:background="@color/search_bg"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_constraint_layout_main"
@@ -24,7 +24,7 @@
         android:src="@drawable/ic_keyboard_backspace_white_24dp"
         android:background="@null"
         app:layout_constraintTop_toTopOf="@+id/searchmodule_bgholder"
-        app:layout_constraintLeft_toLeftOf="@+id/searchmodule_bgholder"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/searchmodule_bgholder"
@@ -35,7 +35,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:hint="@string/destination_hint"
+        android:hint="@string/destination_search_hint"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:textColor="@color/material_text_icons"
         android:textColorHint="@color/material_text_icons"

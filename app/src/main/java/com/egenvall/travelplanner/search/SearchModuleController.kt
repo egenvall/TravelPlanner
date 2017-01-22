@@ -5,12 +5,10 @@ import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.bluelinelabs.conductor.Controller
-import com.bluelinelabs.conductor.RouterTransaction
 import com.egenvall.travelplanner.R
 import com.egenvall.travelplanner.TravelPlanner
 import com.egenvall.travelplanner.adapter.SearchAdapter
@@ -28,8 +26,11 @@ import rx.subscriptions.Subscriptions
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-
-class SearchModuleController (val target : Controller = SearchController() ) : BaseController<SearchModulePresenter.View, SearchModulePresenter>(),
+/**
+ * Modular Search Functionality performing the actual search for an address or stop based on
+ * user input
+ */
+class SearchModuleController (val target : Controller = SearchRouterController(), val origin : Boolean = false ) : BaseController<SearchModulePresenter.View, SearchModulePresenter>(),
         SearchModulePresenter.View {
 
     //TODO T should <T  : Controller & TargetTitleListeener>
@@ -43,12 +44,11 @@ class SearchModuleController (val target : Controller = SearchController() ) : B
 
 
     interface TargetTitleListener{
-        fun onSelectedStop(stop: StopLocation)
+        fun onSelectedStop(stop: StopLocation,origin: Boolean)
     }
 
     override fun onViewBound(view: View) {
         initInjection()
-        Log.d("THIS", "IS BOUND ${router.backstack}")
         resultRecycler = view.searchresult_recycler
         resultAdapter = SearchAdapter(mutableListOf<StopLocation>()){ clickedStopItem(it) }
         resultRecycler.setHasFixedSize(false)
@@ -57,6 +57,10 @@ class SearchModuleController (val target : Controller = SearchController() ) : B
         setTargetController(target)
         editTextSub = getEditTextSub(view.searchmodule_edt)
         view.back_button.setOnClickListener { clickedBack() }
+        view.searchmodule_edt.requestFocus()
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+
     }
 
 
@@ -77,6 +81,8 @@ class SearchModuleController (val target : Controller = SearchController() ) : B
 
     fun clickedBack(){
         editTextSub.unsubscribe()
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
         router.popController(this)
     }
 
@@ -94,7 +100,7 @@ class SearchModuleController (val target : Controller = SearchController() ) : B
         editTextSub.unsubscribe()
         val targetController = targetController
         if (targetController != null){
-            (targetController as TargetTitleListener).onSelectedStop(item)
+            (targetController as TargetTitleListener).onSelectedStop(item,origin)
             router.popController(this)
         }
     }
@@ -121,9 +127,8 @@ class SearchModuleController (val target : Controller = SearchController() ) : B
             view?.showSnackbar("No results found")
         }
         else {
-                resultAdapter.locationList = list
-                resultAdapter.notifyDataSetChanged()
-
+            resultAdapter.locationList = list
+            resultAdapter.notifyDataSetChanged()
         }
     }
 

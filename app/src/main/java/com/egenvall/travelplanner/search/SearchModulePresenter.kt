@@ -25,10 +25,10 @@ class SearchModulePresenter @Inject constructor(private val searchUsecase: Searc
                 } ?: listOf<StopLocation>()
                 val stopList = locationList.StopLocation ?: listOf<StopLocation>()
 
-                //Set the view to show 3 most relevant items sorted by relevance
+                //Set the view to show 6 most relevant items sorted by relevance
                 performViewAction {
                     setSearchResult((coordList + stopList)
-                            .filter { it.idx.toInt() <= 3 }
+                            .filter { it.idx.toInt() <= 6 }
                             .sortedBy { it.idx })
                 }
 

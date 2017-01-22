@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/search_constraint_layout_main"
@@ -46,12 +47,11 @@
         app:layout_constraintTop_toBottomOf="@+id/search_title_text"
         app:layout_constraintLeft_toLeftOf="@+id/search_title_text" />
 
-    <EditText
+    <TextView
         android:id="@+id/origin_edt"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toRightOf="@+id/search_gps_button"
-        android:inputType="textPersonName"
         android:hint="@string/origin_hint"
         android:background="@android:color/transparent"
         android:layout_marginStart="8dp"
@@ -60,27 +60,6 @@
         android:textColorHint="@color/material_text_icons"
         app:layout_constraintTop_toTopOf="@+id/search_gps_button" />
 
-    <!-- EXPANDABLE LAYOUT FOR ORIGIN RECYCLER -->
-    <net.cachapa.expandablelayout.ExpandableLayout
-        android:id="@+id/expandable_layout_origin_search"
-        app:layout_constraintTop_toBottomOf="@+id/origin_edt"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:el_duration="300"
-        app:el_expanded="false"
-        app:el_translate_children="true">
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@color/material_primary_light"
-            android:id="@+id/origin_recycler">
-        </android.support.v7.widget.RecyclerView>
-
-    </net.cachapa.expandablelayout.ExpandableLayout>
-
 
     <View
         android:layout_height="1dp"
@@ -88,18 +67,17 @@
         android:background="@color/material_divider"
         android:id="@+id/search_divider"
         app:layout_constraintBottom_toTopOf="@+id/desination_edt"
-        app:layout_constraintTop_toBottomOf="@+id/expandable_layout_origin_search"
+        app:layout_constraintTop_toBottomOf="@+id/origin_edt"
         app:layout_constraintLeft_toLeftOf="@+id/desination_edt" />
 
 
 
 <!-- DESTINATION -->
-    <EditText
+    <TextView
         android:id="@+id/desination_edt"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toRightOf="@+id/search_dest_icon"
-        android:inputType="textPersonName"
         android:hint="@string/destination_hint"
         android:layout_marginStart="8dp"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
@@ -108,26 +86,7 @@
         android:background="@android:color/transparent"
         app:layout_constraintTop_toTopOf="@+id/search_dest_icon" />
 
-    <!-- EXPANDABLE LAYOUT FOR DEST RECYCLER -->
-    <net.cachapa.expandablelayout.ExpandableLayout
-        android:id="@+id/expandable_layout_destination_search"
-        app:layout_constraintTop_toBottomOf="@+id/desination_edt"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:el_duration="300"
-        app:el_expanded="false"
-        app:el_translate_children="true">
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@color/material_primary_light"
-            android:id="@+id/destination_recycler">
-        </android.support.v7.widget.RecyclerView>
-
-    </net.cachapa.expandablelayout.ExpandableLayout>
 
     <ImageView
         android:layout_width="wrap_content"
@@ -183,7 +142,7 @@
         android:id="@+id/padderview"
         android:layout_width="match_parent"
         android:layout_height="18dp"
-        app:layout_constraintTop_toBottomOf="@id/expandable_layout_destination_search"
+        app:layout_constraintTop_toBottomOf="@id/desination_edt"
         />
 
 

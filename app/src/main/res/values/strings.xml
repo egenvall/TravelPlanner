@@ -15,8 +15,9 @@
     <string name="origin">Origin</string>
     <string name="search_title">SÖK RESA</string>
     <string name="search_history">Sökhistorik</string>
-    <string name="origin_hint">My Location</string>
-    <string name="destination_hint">Destination</string>
+    <string name="origin_hint">Från</string>
+    <string name="destination_hint">Till</string>
+    <string name="destination_search_hint">Hållplats / Adress</string>
     <string name="stoplocation_hint">Stoplocation name</string>
     <string name="content_desc_gps_btn">gpsbtn</string>
     <string name="content_desc_swap_btn">swapbtn</string>
