@@ -1,7 +1,6 @@
 package com.egenvall.travelplanner.adapter
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,6 @@ class SearchAdapter(var locationList: List<StopLocation>, val itemClick: (StopLo
 
         fun bindStopLocation(item : StopLocation) {
             with(item) {
-                Log.d("ADAPTER", "Doing : $item")
                 itemView.stoplocation_name.text = item.name
                 itemView.setOnClickListener { itemClick(item) }
                 when(type){

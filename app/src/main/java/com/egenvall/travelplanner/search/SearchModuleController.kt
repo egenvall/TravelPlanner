@@ -19,6 +19,9 @@ import com.egenvall.travelplanner.common.injection.module.ActivityModule
 import com.egenvall.travelplanner.extension.showSnackbar
 import com.egenvall.travelplanner.model.StopLocation
 import com.jakewharton.rxbinding.widget.RxTextView
+import jp.wasabeef.recyclerview.animators.FadeInAnimator
+import jp.wasabeef.recyclerview.animators.LandingAnimator
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import kotlinx.android.synthetic.main.screen_searchmodule.view.*
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -54,13 +57,14 @@ class SearchModuleController (val target : Controller = SearchRouterController()
         resultRecycler.setHasFixedSize(false)
         resultRecycler.layoutManager = LinearLayoutManager(applicationContext)
         resultRecycler.adapter = resultAdapter
+        resultRecycler.itemAnimator = FadeInAnimator()
+        resultRecycler.itemAnimator.addDuration = 150
         setTargetController(target)
         editTextSub = getEditTextSub(view.searchmodule_edt)
         view.back_button.setOnClickListener { clickedBack() }
         view.searchmodule_edt.requestFocus()
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-
     }
 
 
@@ -91,6 +95,7 @@ class SearchModuleController (val target : Controller = SearchRouterController()
     }
 
     fun searchForLocation(searchTerm : String) {
+        resultAdapter.locationList = listOf<StopLocation>() //Workaround to empty list
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
         presenter.searchForLocation(searchTerm)
@@ -128,7 +133,9 @@ class SearchModuleController (val target : Controller = SearchRouterController()
         }
         else {
             resultAdapter.locationList = list
-            resultAdapter.notifyDataSetChanged()
+            for (i in 0..resultAdapter.locationList.size){
+                resultAdapter.notifyItemInserted(i)
+            }
         }
     }
 
