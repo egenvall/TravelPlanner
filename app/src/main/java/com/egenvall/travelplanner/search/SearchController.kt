@@ -21,6 +21,7 @@ import com.egenvall.travelplanner.extension.*
 import com.egenvall.travelplanner.model.SearchPair
 import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.Trip
+import com.egenvall.travelplanner.tripdetail.TripController
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import kotlinx.android.synthetic.main.screen_search.view.*
 import java.text.SimpleDateFormat
@@ -79,6 +80,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
 
         view.search_button.setOnClickListener {
             presenter.searchForTripByLocations(mOrigin!!,mDestination!!)
+            searchForTrips(mOrigin!!,mDestination!!)
         }
 
         val format = SimpleDateFormat("EEE ddMMM HH:mm", Locale.getDefault())
@@ -118,6 +120,11 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
 // UI Elements and Interaction
 //===================================================================================
 
+    fun searchForTrips(origin: StopLocation, dest: StopLocation){
+        router.pushController(RouterTransaction.with(TripController(origin,dest))
+                .pushChangeHandler(HorizontalChangeHandler())
+                .popChangeHandler(HorizontalChangeHandler()))
+    }
     fun clickedHistoryPair(pair : SearchPair){
         presenter.searchForTripByLocations(pair.origin,pair.destination)
     }

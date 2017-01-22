@@ -24,4 +24,8 @@
     <string name="content_desc_expand_btn">expandbtn</string>
     <string name="content_desc_stoploc_img">Img</string>
 
+
+    <!-- Trip Overview Strings -->
+    <string name="trip_results">Resor</string>
+
 </resources>

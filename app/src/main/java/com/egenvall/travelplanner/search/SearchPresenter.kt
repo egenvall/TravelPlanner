@@ -26,17 +26,6 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
     }
     fun searchForTripByLocations(origin: StopLocation, dest: StopLocation) {
         addToSearchHistory(origin, dest)
-        searchTripByStopsUsecase.searchTripsByStops(origin, dest, object : Observer<TripResponseModel> {
-            override fun onNext(value: TripResponseModel) = performViewAction {
-                setTripResults(value.TripList.Trip)
-            }
-
-            override fun onError(e: Throwable?) {
-                performViewAction { showMessage(e.toString()) }
-            }
-
-            override fun onCompleted() = getSearchHistory()
-        })
     }
 
     private fun addToSearchHistory(origin: StopLocation, dest: StopLocation)
