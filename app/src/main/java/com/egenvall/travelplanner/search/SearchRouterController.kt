@@ -29,5 +29,4 @@ class SearchRouterController : Controller(){
             childRouter.setRoot(RouterTransaction.with(SearchController()))
         }
     }
-
 }

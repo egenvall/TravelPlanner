@@ -27,5 +27,11 @@ class MainActivity : AppCompatActivity(){
             mRouter.setRoot(RouterTransaction.with(MainController()));
         }
     }
+
+    override fun onBackPressed() {
+        if (!mRouter.handleBack()) {
+            super.onBackPressed()
+        }
+    }
 }
 

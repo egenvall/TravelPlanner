@@ -17,6 +17,7 @@ import com.egenvall.travelplanner.extension.showSnackbar
 import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.Trip
 import kotlinx.android.synthetic.main.screen_trip_overview.view.*
+import kotlinx.android.synthetic.main.search_placeholder.view.*
 import javax.inject.Inject
 
 
@@ -40,16 +41,27 @@ class TripController(val origin : StopLocation = StopLocation(), val dest : Stop
         tripRecycler.adapter = tripAdapter
 
         //Set the header text to the name of then destination
-        view.trip_back_button.setOnClickListener {
-            tripRecycler.adapter = null
-            router.popController(this)
-        }
+        view.trip_back_button.setOnClickListener {backPressed()}
+
         view.tripoverview_text.text = dest.name
+
+        Log.d(TAG,"Router backstack ${router.backstack}")
+
     }
 
     override fun onAttach(view: View) {
         super.onAttach(view)
         presenter.searchForTripByLocations(origin,dest)
+    }
+
+    fun backPressed(){
+        tripRecycler.adapter = null
+        router.popController(this)
+    }
+
+    override fun handleBack(): Boolean {
+        backPressed()
+        return true
     }
 
 

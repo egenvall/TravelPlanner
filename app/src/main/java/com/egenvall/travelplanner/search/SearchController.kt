@@ -103,6 +103,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     }
 
     fun openSearchScreen(origin: Boolean){
+        //Childrouter?
         router.pushController(RouterTransaction.with(SearchModuleController(this,origin))
                 .pushChangeHandler(HorizontalChangeHandler())
                 .popChangeHandler(HorizontalChangeHandler()))
@@ -112,6 +113,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
     override fun onAttach(view: View) {
         super.onAttach(view)
         presenter.getSearchHistory()
+        Log.d(TAG,"Router backstack ${router.backstack}")
     }
 
 //===================================================================================

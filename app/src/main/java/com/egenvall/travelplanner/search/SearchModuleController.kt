@@ -91,6 +91,11 @@ class SearchModuleController (val target : Controller = SearchRouterController()
         router.popController(this)
     }
 
+    override fun handleBack(): Boolean {
+        clickedBack()
+        return true
+    }
+
     override fun showMessage(str: String) {
         view?.showSnackbar(str)
     }
