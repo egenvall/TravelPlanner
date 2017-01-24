@@ -87,6 +87,7 @@ class SearchModuleController (val target : Controller = SearchRouterController()
         editTextSub.unsubscribe()
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
+        resultRecycler.adapter = null
         router.popController(this)
     }
 

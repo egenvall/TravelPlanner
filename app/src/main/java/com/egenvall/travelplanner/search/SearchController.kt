@@ -78,9 +78,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
         mHistoryAdapter = SearchHistoryAdapter(mutableListOf<SearchPair>()){clickedHistoryPair(it)}
         mRecyclerHistory.adapter = mHistoryAdapter
 
-        view.search_button.setOnClickListener {
-            presenter.searchForTripByLocations(mOrigin!!,mDestination!!)
-            searchForTrips(mOrigin!!,mDestination!!)
+        view.search_button.setOnClickListener {presenter.searchForTripByLocations(mOrigin!!,mDestination!!)
         }
 
         val format = SimpleDateFormat("EEE ddMMM HH:mm", Locale.getDefault())
@@ -120,7 +118,7 @@ class SearchController : BaseController<SearchPresenter.View, SearchPresenter>()
 // UI Elements and Interaction
 //===================================================================================
 
-    fun searchForTrips(origin: StopLocation, dest: StopLocation){
+    override fun searchForTrips(origin: StopLocation, dest: StopLocation){
         router.pushController(RouterTransaction.with(TripController(origin,dest))
                 .pushChangeHandler(HorizontalChangeHandler())
                 .popChangeHandler(HorizontalChangeHandler()))

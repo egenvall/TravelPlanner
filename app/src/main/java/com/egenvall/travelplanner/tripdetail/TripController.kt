@@ -2,10 +2,13 @@ package com.egenvall.travelplanner.tripdetail
 
 import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import com.egenvall.travelplanner.R
 import com.egenvall.travelplanner.TravelPlanner
+import com.egenvall.travelplanner.adapter.TripOverviewAdapter
 import com.egenvall.travelplanner.base.presentation.BaseController
 import com.egenvall.travelplanner.common.injection.component.DaggerTripViewComponent
 import com.egenvall.travelplanner.common.injection.component.TripViewComponent
@@ -13,6 +16,7 @@ import com.egenvall.travelplanner.common.injection.module.ActivityModule
 import com.egenvall.travelplanner.extension.showSnackbar
 import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.Trip
+import kotlinx.android.synthetic.main.screen_trip_overview.view.*
 import javax.inject.Inject
 
 
@@ -24,9 +28,23 @@ class TripController(val origin : StopLocation = StopLocation(), val dest : Stop
     override val passiveView: TripPresenter.View = this
     @Inject override lateinit var presenter: TripPresenter
     @LayoutRes override val layoutResId: Int = R.layout.screen_trip_overview
+    lateinit var tripRecycler : RecyclerView
+    lateinit var tripAdapter : TripOverviewAdapter
 
     override fun onViewBound(view: View) {
         initInjection()
+        tripRecycler = view.tripoverview_recycler
+        tripRecycler.setHasFixedSize(false)
+        tripRecycler.layoutManager = LinearLayoutManager(applicationContext)
+        tripAdapter = TripOverviewAdapter(mutableListOf<Trip>()){ clickedTrip(it)}
+        tripRecycler.adapter = tripAdapter
+
+        //Set the header text to the name of then destination
+        view.trip_back_button.setOnClickListener {
+            tripRecycler.adapter = null
+            router.popController(this)
+        }
+        view.tripoverview_text.text = dest.name
     }
 
     override fun onAttach(view: View) {
@@ -34,6 +52,10 @@ class TripController(val origin : StopLocation = StopLocation(), val dest : Stop
         presenter.searchForTripByLocations(origin,dest)
     }
 
+
+    fun clickedTrip(trip : Trip){
+
+    }
 //===================================================================================
 // Dependency injection
 //===================================================================================
@@ -57,14 +79,7 @@ class TripController(val origin : StopLocation = StopLocation(), val dest : Stop
     }
 
     override fun setTripResults(list: List<Trip>) {
-        for (t in list){
-            Log.d(TAG,"-------Trip  Byten: ${t.Leg.filter { it.type != "WALK" }.size-1}----------")
-            for (l in t.Leg.filter { it.type != "WALK" }){
-                Log.d(TAG, ": [${l.Origin.name} - ${l.Destination.name} : ${l.Origin.time} - ${l.Destination.time}")
-
-            }
-            Log.d(TAG,"---------B-----------")
-
-        }
+        tripAdapter.tripList = list
+        tripAdapter.notifyDataSetChanged()
     }
 }

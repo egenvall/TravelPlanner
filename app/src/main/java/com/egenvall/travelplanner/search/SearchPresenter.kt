@@ -26,6 +26,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
     }
     fun searchForTripByLocations(origin: StopLocation, dest: StopLocation) {
         addToSearchHistory(origin, dest)
+        performViewAction {searchForTrips(origin,dest)}
     }
 
     private fun addToSearchHistory(origin: StopLocation, dest: StopLocation)
@@ -44,6 +45,7 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         fun showMessage(str: String)
         fun setTripResults(list: List<Trip>)
         fun setSearchHistory(list: List<SearchPair>)
+        fun searchForTrips(origin: StopLocation, dest: StopLocation)
     }
 
 
