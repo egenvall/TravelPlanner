@@ -16,6 +16,9 @@ import com.egenvall.travelplanner.common.injection.module.ActivityModule
 import com.egenvall.travelplanner.extension.showSnackbar
 import com.egenvall.travelplanner.model.StopLocation
 import com.egenvall.travelplanner.model.Trip
+import jp.wasabeef.recyclerview.animators.FadeInAnimator
+import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import kotlinx.android.synthetic.main.screen_trip_overview.view.*
 import kotlinx.android.synthetic.main.search_placeholder.view.*
 import javax.inject.Inject
@@ -34,19 +37,19 @@ class TripController(val origin : StopLocation = StopLocation(), val dest : Stop
 
     override fun onViewBound(view: View) {
         initInjection()
+        tripAdapter = TripOverviewAdapter(mutableListOf<Trip>()){clickedTrip(it)}
         tripRecycler = view.tripoverview_recycler
-        tripRecycler.setHasFixedSize(false)
-        tripRecycler.layoutManager = LinearLayoutManager(applicationContext)
-        tripAdapter = TripOverviewAdapter(mutableListOf<Trip>()){ clickedTrip(it)}
-        tripRecycler.adapter = tripAdapter
+        with(tripRecycler){
+            setHasFixedSize(false)
+            layoutManager = LinearLayoutManager(applicationContext)
+            adapter = tripAdapter
+            itemAnimator = FadeInLeftAnimator()
+            itemAnimator.addDuration = 250
+        }
 
         //Set the header text to the name of then destination
         view.trip_back_button.setOnClickListener {backPressed()}
-
         view.tripoverview_text.text = dest.name
-
-        Log.d(TAG,"Router backstack ${router.backstack}")
-
     }
 
     override fun onAttach(view: View) {
@@ -92,6 +95,7 @@ class TripController(val origin : StopLocation = StopLocation(), val dest : Stop
 
     override fun setTripResults(list: List<Trip>) {
         tripAdapter.tripList = list
-        tripAdapter.notifyDataSetChanged()
+        //To work with animations on insertion
+        for (i in 0..list.size) tripAdapter.notifyItemInserted(i)
     }
 }
