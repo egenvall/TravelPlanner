@@ -67,11 +67,24 @@ class SearchModuleController (val target : Controller = SearchRouterController()
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
+    //TODO Fix crash when emitting new item after the debounce, and before network is finished
+
+    /**
+     * Debounce 1
+     * Network 1 ongoing
+     * Debounce 2
+     * Network 2 ongoing
+     * Network 1 done
+     * updateview 1
+     * Netwprl 2 done
+     * updateview 2 done  --> problem with recyclerview. Should interrupt anyway
+     *
+     */
 
     fun getEditTextSub(edit : EditText) : Subscription {
         edit.setSelectAllOnFocus(true)
         return RxTextView.textChanges(edit)
-                .skip(1)
+                //.skip(1)
                 .map { s -> s.toString()}
                 .throttleLast(200, TimeUnit.MILLISECONDS) //Emit only the last item in 200ms interval
                 .debounce (750, TimeUnit.MILLISECONDS)   //Emit the last item if 750ms has passed with no more emits
@@ -101,7 +114,7 @@ class SearchModuleController (val target : Controller = SearchRouterController()
     }
 
     fun searchForLocation(searchTerm : String) {
-        resultAdapter.locationList = listOf<StopLocation>() //Workaround to empty list
+        resultAdapter.locationList = mutableListOf<StopLocation>() //Workaround to empty list
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
         presenter.searchForLocation(searchTerm)
@@ -138,10 +151,7 @@ class SearchModuleController (val target : Controller = SearchRouterController()
             view?.showSnackbar("No results found")
         }
         else {
-            resultAdapter.locationList = list
-            for (i in 0..resultAdapter.locationList.size){
-                resultAdapter.notifyItemInserted(i)
-            }
+            resultAdapter.addToList(list)
         }
     }
 

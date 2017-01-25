@@ -21,7 +21,13 @@ class SearchAdapter(var locationList: List<StopLocation>, val itemClick: (StopLo
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindStopLocation(locationList[position])
+    }
 
+    fun addToList(list : List<StopLocation>){
+        locationList = list
+        for(i in 0..locationList.size-1){
+            notifyItemInserted(i)
+        }
     }
 
     override fun getItemCount() = locationList.size
