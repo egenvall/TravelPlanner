@@ -23,17 +23,17 @@ class SearchAdapter(var locationList: List<StopLocation>, val itemClick: (StopLo
         holder.bindStopLocation(locationList[position])
     }
 
-    fun addToList(list : List<StopLocation>){
-        locationList = list
-        for(i in 0..locationList.size-1){
-            notifyItemInserted(i)
+    fun setList(newList: List<StopLocation>){
+        locationList = newList
+        //TODO Fix Inconsistency detected. Invalid view holder adapter positionViewHolder
+        for (i in 0..locationList.size -1){
+            notifyItemInserted(i);
         }
     }
 
     override fun getItemCount() = locationList.size
 
     class ViewHolder(view: View, val itemClick: (StopLocation) -> Unit) : RecyclerView.ViewHolder(view) {
-
         fun bindStopLocation(item : StopLocation) {
             with(item) {
                 itemView.stoplocation_name.text = item.name

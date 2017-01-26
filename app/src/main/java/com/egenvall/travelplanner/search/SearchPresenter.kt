@@ -25,8 +25,14 @@ class SearchPresenter @Inject constructor(private val searchUsecase: SearchUseca
         searchForTripByLocations(mapToStopLocation(origin),mapToStopLocation(dest))
     }
     fun searchForTripByLocations(origin: StopLocation, dest: StopLocation) {
-        addToSearchHistory(origin, dest)
-        performViewAction {searchForTrips(origin,dest)}
+        // Only Stops have id, and you can't travel to the same stop
+        if ((origin.id == dest.id) and (origin.type == "STOP") and (dest.type == "STOP")){
+            performViewAction { showMessage("Origin and Destination can not be the same. Try again") }
+        }
+        else{
+            addToSearchHistory(origin, dest)
+            performViewAction {searchForTrips(origin,dest)}
+        }
     }
 
     private fun addToSearchHistory(origin: StopLocation, dest: StopLocation)
